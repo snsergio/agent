@@ -1,0 +1,18 @@
+# Ubuntu services - metric collector - PUB-4d87eb0-20230508150250
+[Unit]
+Description=Start the Edge Station Metrics Collector v4 exporter
+
+[Service]
+Type=simple
+User=eyeflow
+Restart=always
+RestartSec=10
+Environment="CONFIGPATH=/opt/eyeflow/monitor"
+CPUAccounting=yes
+MemoryAccounting=yes
+
+ExecStart=/usr/bin/python3 /opt/eyeflow/monitor/metric-collector-v4.py
+
+[Install]
+WantedBy=multi-user.target
+ 
