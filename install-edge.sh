@@ -305,7 +305,6 @@ if [ -f /opt/eyeflow/install/edge-option-1 ]; then
         echo "#############################" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "#####   end of script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
         echo "#################################################################"
         echo "#          Rebooting station to complete installation           #"
         echo "#################################################################"
@@ -313,7 +312,6 @@ if [ -f /opt/eyeflow/install/edge-option-1 ]; then
         echo "#################################################################"
         echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
         echo "#################################################################"
-        reboot
     fi
 elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
     echo "###############################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
@@ -424,6 +422,10 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         echo "! To start Eyeflow EDGE in the background, run the following command:                                            !" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
         echo "!     ./docker_edge_run.sh                                                                                       !" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
         echo "+----------------------------------------------------------------------------------------------------------------+" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
+        echo "##### Pulling docker image     #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "Start pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        docker pull snsergio/monitor:efd1
+        echo "End pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
         rm -f /opt/eyeflow/install/resume-status
         rm -f /opt/eyeflow/install/edge-option-2
@@ -433,7 +435,6 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         echo "#############################" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "#####   end of script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
         echo "############################################################################################"
         echo "# Instructions to run Eyeflow Edge at: /opt/eyeflow/install/how-execute-eyeflow-docker.txt #"
         echo "############################################################################################"
@@ -446,7 +447,6 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
         echo "#################################################################"
         sleep 5
-        reboot
     fi
 elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
     echo "###############################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
@@ -562,6 +562,10 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
         # echo "! To start Eyeflow EDGE in the background, run the following command:                                            !" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
         # echo "!     ./docker_edge_run.sh                                                                                       !" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
         # echo "+----------------------------------------------------------------------------------------------------------------+" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
+        # echo "##### Pulling docker image     #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        # echo "Start pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        # docker pull snsergio/monitor:efd1
+        # echo "End pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
         rm -f /opt/eyeflow/install/resume-status
         rm -f /opt/eyeflow/install/edge-option-3
@@ -571,7 +575,6 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
         echo "#############################" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "#####   end of script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
         echo "############################################################################################"
         echo "# Instructions to run Eyeflow Edge at: /opt/eyeflow/install/how-execute-eyeflow-docker.txt #"
         echo "############################################################################################"
@@ -584,6 +587,8 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
         echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
         echo "#################################################################"
         sleep 5
-        reboot
     fi
+    
+    mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
+    reboot
 fi
