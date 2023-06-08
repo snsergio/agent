@@ -6,7 +6,7 @@
 #     Python on Docker
 #     C++ on Docker
 # To download instructions and script:
-#     wget https://raw.githubusercontent.com/snsergio/agent/main/README%20Eyeflow%20Edge%20Install.md
+#     wget https://raw.githubusercontent.com/snsergio/agent/main/README-Eyeflow_Edge_Install.txt
 #     wget https://raw.githubusercontent.com/snsergio/agent/main/install-edge.sh
 #     sudo chmod +x install-edge.sh
 #     sudo ./install-edge.sh
