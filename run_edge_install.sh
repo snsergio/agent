@@ -7,5 +7,5 @@ if [ "$EUID" -ne 0 ]; then
 fi
 curl https://raw.githubusercontent.com/snsergio/agent/main/install-edge.sh
 chmod +x install-edge.sh
-source /opt/eyeflow/install/install-monitor.sh
+sudo source /opt/eyeflow/install/install-monitor.sh
 echo "End of installation"
