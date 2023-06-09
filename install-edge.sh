@@ -8,7 +8,7 @@
 # To download instructions and script:
 #     wget https://raw.githubusercontent.com/snsergio/agent/main/README-Eyeflow_Edge_Install.txt
 #     wget https://raw.githubusercontent.com/snsergio/agent/main/install-edge.sh
-#     sudo chmod +x install-edge.sh
+#     chmod +x install-edge.sh
 #     sudo ./install-edge.sh
 clear
 set -eo pipefail
@@ -317,9 +317,9 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         apt install -y nvidia-driver-525-server | sudo tee -a /opt/eyeflow/install/edge-install.log
         script="sudo bash /opt/eyeflow/install/install-edge.sh"
         touch /home/eyeflow/.bash_login
-        echo 'echo "####################################################################"' > /home/eyeflow/.bash_login
-        echo 'echo "#    Resuming EDGE on Ubuntu installation - Enter SUDO password    #"' >> /home/eyeflow/.bash_login
-        echo 'echo "####################################################################"' >> /home/eyeflow/.bash_login
+        echo 'echo "#####################################################################"' > /home/eyeflow/.bash_login
+        echo 'echo "# Resuming EDGE Python on Docker installation - Enter SUDO password #"' >> /home/eyeflow/.bash_login
+        echo 'echo "#####################################################################"' >> /home/eyeflow/.bash_login
         echo "$script" >> /home/eyeflow/.bash_login
         touch /opt/eyeflow/install/resume-status
         echo "#################################################################################"
@@ -440,7 +440,7 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
         script="sudo bash /opt/eyeflow/install/install-edge.sh"
         touch /home/eyeflow/.bash_login
         echo 'echo "####################################################################"' > /home/eyeflow/.bash_login
-        echo 'echo "#    Resuming EDGE on Ubuntu installation - Enter SUDO password    #"' >> /home/eyeflow/.bash_login
+        echo 'echo "#  Resuming EDGE C++ on Docker installation - Enter SUDO password  #"' >> /home/eyeflow/.bash_login
         echo 'echo "####################################################################"' >> /home/eyeflow/.bash_login
         echo "$script" >> /home/eyeflow/.bash_login
         touch /opt/eyeflow/install/resume-status
@@ -554,12 +554,12 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
 fi
 echo " "
 echo " "
-echo "#####################################################################################"
-echo "#  To install Metric collector run the following command:                           #"
-echo "#      wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh "
-echo "#      chmod a+x install-monitor.sh                                                  "
-echo "#      sudo ./install-monitor.sh                                                     "
-echo "#####################################################################################"
+echo "######################################################################################"
+echo "#  To install Metric collector run the following command:                            #"
+echo "#      wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh #"
+echo "#      chmod a+x install-monitor.sh                                                  #"
+echo "#      sudo ./install-monitor.sh                                                     #"
+echo "######################################################################################"
 echo " "
 echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
 rm -f /opt/eyeflow/install/resume-status
