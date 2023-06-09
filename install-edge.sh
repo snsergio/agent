@@ -566,6 +566,8 @@ rm -f /opt/eyeflow/install/resume-status
 rm -f /opt/eyeflow/install/edge-option-1
 rm -f /opt/eyeflow/install/edge-option-2
 rm -f /opt/eyeflow/install/edge-option-3
+rm -f /opt/eyeflow/install/install-edge.sh
+rm -rf /opt/eyeflow/install/eyeflow-edge-python
 rm -f /home/eyeflow/.bash_login
 rm -f /home/eyeflow/install-edge.sh
 rm -f /home/eyeflow/cuda-repo*
