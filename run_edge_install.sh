@@ -3,7 +3,7 @@
 wget https://raw.githubusercontent.com/snsergio/agent/main/install-edge.sh
 echo $(pwd)
 ls -l
-sudo mv ./install-monitor.sh /opt/eyeflow/install/install-monitor.sh
+sudo mv install-monitor.sh /opt/eyeflow/install/install-monitor.sh
 chmod a+x /opt/eyeflow/install/install-monitor.sh
 sudo source /opt/eyeflow/install/install-monitor.sh
 echo "End of installation"
