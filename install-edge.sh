@@ -395,6 +395,10 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         chmod +x /opt/eyeflow/docker_edge_run.sh
         chmod +x /opt/eyeflow/docker_edge_interactive.sh
         touch /opt/eyeflow/install/how-execute-eyeflow-docker.txt
+        echo "##### Pulling docker image     #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "Start pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        docker pull snsergio/monitor:efd1
+        echo "End pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         clear
         echo "+----------------------------------------------------------------------------------------------------------------+" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
         echo "! To start DEVICE Licensing on Eyeflow DEVICES, copy the reference command from Eyeflow / Devices / Copy Command !" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
@@ -411,10 +415,6 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         echo "! To start Eyeflow EDGE in the background, run the following command:                                            !" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
         echo "!     ./docker_edge_run.sh                                                                                       !" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
         echo "+----------------------------------------------------------------------------------------------------------------+" | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
-        echo "##### Pulling docker image     #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "Start pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        docker pull snsergio/monitor:efd1
-        echo "End pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "###############################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "#####   end of EDGE installation script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "#####          Python on docker           #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
