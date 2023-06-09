@@ -295,23 +295,10 @@ if [ -f /opt/eyeflow/install/edge-option-1 ]; then
         python3 -m pip install tf2onnx
         python3 -m pip install nvidia-pyindex
         python3 -m pip install onnx-graphsurgeon
-        echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        rm -f /opt/eyeflow/install/resume-status
-        rm -f /opt/eyeflow/install/edge-option-1
-        rm -f /home/eyeflow/.bash_login
-        rm -f /home/eyeflow/install-edge.sh
-        rm -f /home/eyeflow/cuda-repo*
-        rm -f /home/eyeflow/libcudnn*
-        echo "#############################" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "#####   end of script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "#################################################################"
-        echo "#          Rebooting station to complete installation           #"
-        echo "#################################################################"
-        echo " "
-        echo "#################################################################"
-        echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
-        echo "#################################################################"
+        echo "###############################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "#####   end of EDGE installation script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "#####      Python on physical server      #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "##### Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
     fi
 elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
     echo "###############################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
@@ -426,26 +413,13 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         echo "Start pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         docker pull snsergio/monitor:efd1
         echo "End pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        rm -f /opt/eyeflow/install/resume-status
-        rm -f /opt/eyeflow/install/edge-option-2
-        rm -f /home/eyeflow/.bash_login
-        rm -f /home/eyeflow/install-edge.sh
-        echo " " | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
-        echo "#############################" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "#####   end of script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "###############################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "#####   end of EDGE installation script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "#####          Python on docker           #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "##### Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "############################################################################################"
         echo "# Instructions to run Eyeflow Edge at: /opt/eyeflow/install/how-execute-eyeflow-docker.txt #"
         echo "############################################################################################"
-        echo " "
-        echo "#################################################################"
-        echo "#          Rebooting station to complete installation           #"
-        echo "#################################################################"
-        echo " "
-        echo "#################################################################"
-        echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
-        echo "#################################################################"
         sleep 5
     fi
 elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
@@ -566,29 +540,54 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
         # echo "Start pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         # docker pull snsergio/monitor:efd1
         # echo "End pull at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        rm -f /opt/eyeflow/install/resume-status
-        rm -f /opt/eyeflow/install/edge-option-3
-        rm -f /home/eyeflow/.bash_login
-        rm -f /home/eyeflow/install-edge.sh
-        echo " " | sudo tee -a /opt/eyeflow/install/how-execute-eyeflow-docker.txt
-        echo "#############################" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "#####   end of script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        echo "Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "###############################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "#####   end of EDGE installation script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "#####            C++ on docker            #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        echo "##### Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "############################################################################################"
         echo "# Instructions to run Eyeflow Edge at: /opt/eyeflow/install/how-execute-eyeflow-docker.txt #"
         echo "############################################################################################"
-        echo " "
-        echo "#################################################################"
-        echo "#          Rebooting station to complete installation           #"
-        echo "#################################################################"
-        echo " "
-        echo "#################################################################"
-        echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
-        echo "#################################################################"
         sleep 5
     fi
-    
+    echo " "
+    echo " "
+    echo "###############################################################"
+    echo "#               Metric collector installation                 #"
+    echo "###############################################################"
+    echo " "
+    while true; do
+        read -p "Do you wish to install metric collector on this station <Y/N>? " yn
+        case $yn in
+            [Yy]* ) OPTION="Y"; break;;
+            [Nn]* ) OPTION="N";;
+            * ) echo "Please answer yes (Y/y) or no (N/n)";;
+        esac
+    done
+    if [[ $OPTION = "Y"]]; then
+        echo "#####   Installing Metric Collector agent on Station   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        cd /opt/eyeflow/install
+        curl https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
+        chmod +x install-monitor.sh
+        echo "##### Calling metric collector install script #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+        source /opt/eyeflow/install/install-monitor.sh
+        echo "##### Returning from metric collector install script #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+    fi
+    echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+    rm -f /opt/eyeflow/install/resume-status
+    rm -f /opt/eyeflow/install/edge-option-1
+    rm -f /opt/eyeflow/install/edge-option-2
+    rm -f /opt/eyeflow/install/edge-option-3
+    rm -f /home/eyeflow/.bash_login
+    rm -f /home/eyeflow/install-edge.sh
+    rm -f /home/eyeflow/cuda-repo*
+    rm -f /home/eyeflow/libcudnn*
+    echo "#################################################################"
+    echo "#          Rebooting station to complete installation           #"
+    echo "#################################################################"
+    echo " "
+    echo "#################################################################"
+    echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
+    echo "#################################################################"
     mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
     reboot
 fi
