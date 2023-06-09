@@ -551,31 +551,31 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
         echo "############################################################################################"
         sleep 5
     fi
-    echo " "
-    echo " "
-    echo "#####################################################################################"
-    echo "#  To install Metric collector run the following command:                           #"
-    echo "#      wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh "
-    echo "#      chmod a+x install-monitor.sh                                                  "
-    echo "#      sudo ./install-monitor.sh                                                     "
-    echo "#####################################################################################"
-    echo " "
-    echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-    rm -f /opt/eyeflow/install/resume-status
-    rm -f /opt/eyeflow/install/edge-option-1
-    rm -f /opt/eyeflow/install/edge-option-2
-    rm -f /opt/eyeflow/install/edge-option-3
-    rm -f /home/eyeflow/.bash_login
-    rm -f /home/eyeflow/install-edge.sh
-    rm -f /home/eyeflow/cuda-repo*
-    rm -f /home/eyeflow/libcudnn*
-    echo "#################################################################"
-    echo "#          Rebooting station to complete installation           #"
-    echo "#################################################################"
-    echo " "
-    echo "#################################################################"
-    echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
-    echo "#################################################################"
-    mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
-    reboot
 fi
+echo " "
+echo " "
+echo "#####################################################################################"
+echo "#  To install Metric collector run the following command:                           #"
+echo "#      wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh "
+echo "#      chmod a+x install-monitor.sh                                                  "
+echo "#      sudo ./install-monitor.sh                                                     "
+echo "#####################################################################################"
+echo " "
+echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+rm -f /opt/eyeflow/install/resume-status
+rm -f /opt/eyeflow/install/edge-option-1
+rm -f /opt/eyeflow/install/edge-option-2
+rm -f /opt/eyeflow/install/edge-option-3
+rm -f /home/eyeflow/.bash_login
+rm -f /home/eyeflow/install-edge.sh
+rm -f /home/eyeflow/cuda-repo*
+rm -f /home/eyeflow/libcudnn*
+echo "#################################################################"
+echo "#          Rebooting station to complete installation           #"
+echo "#################################################################"
+echo " "
+echo "#################################################################"
+echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
+echo "#################################################################"
+mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
+reboot
