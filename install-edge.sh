@@ -553,27 +553,13 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
     fi
     echo " "
     echo " "
-    echo "###############################################################"
-    echo "#               Metric collector installation                 #"
-    echo "###############################################################"
+    echo "#####################################################################################"
+    echo "#  To install Metric collector run the following command:                           #"
+    echo "#      wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh "
+    echo "#      chmod a+x install-monitor.sh                                                  "
+    echo "#      sudo ./install-monitor.sh                                                     "
+    echo "#####################################################################################"
     echo " "
-    while true; do
-        read -p "Do you wish to install metric collector on this station <Y/N>? " yn
-        case $yn in
-            [Yy]* ) OPTION="Y"; break;;
-            [Nn]* ) OPTION="N";;
-            * ) echo "Please answer yes (Y/y) or no (N/n)";;
-        esac
-    done
-    if [[ $OPTION = "Y"]]; then
-        echo "#####   Installing Metric Collector agent on Station   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        cd /opt/eyeflow/install
-        wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
-        chmod a+x install-monitor.sh
-        echo "##### Calling metric collector install script #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        bash /opt/eyeflow/install/install-monitor.sh
-        echo "##### Returning from metric collector install script #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-    fi
     echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
     rm -f /opt/eyeflow/install/resume-status
     rm -f /opt/eyeflow/install/edge-option-1
