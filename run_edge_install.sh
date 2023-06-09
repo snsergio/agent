@@ -5,4 +5,4 @@ sudo mv ./install-edge.sh /opt/eyeflow/install/install-edge.sh
 chmod a+x /opt/eyeflow/install/install-edge.sh
 sudo bash /opt/eyeflow/install/install-edge.sh
 echo "End of installation"
-rm install-edge.sh
+rm -f install-edge.sh
