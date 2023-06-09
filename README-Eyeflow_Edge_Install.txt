@@ -3,7 +3,7 @@ Este guia aplica-se a dispositivos com arquitetura x86-64 bits e Sistema Operaci
 ##### Instalação do Eyeflow EDGE em servidor remoto #####
 #####  Versão Eyeflow Python em dispositivo físico e em Docker #####
 
-# Para Instalar EYEFLOW EDGE PYTHON siga as etapas abaixo
+# Para Instalar EYEFLOW EDGE siga as etapas abaixo
 ######################################################
 # Requerimentos                                      #
 # Endereço IP (IPv4) do servidor EDGE                #
@@ -18,7 +18,7 @@ wget https://raw.githubusercontent.com/snsergio/agent/main/install-edge.sh
 ls -l
 # O arquivo install-edge.sh deve aparecer listado
 # Certifique-se que é executável:
-chmod +x install-edge.sh
+chmod a+x install-edge.sh
 # Execute o script como SUDO:
 sudo ./install-edge.sh
 # Será solicitada a senha do usuário eyeflow
@@ -30,20 +30,19 @@ sudo ./install-edge.sh
     #################################################################################
 # Quando o sistema retornar do BOOT, faça novamente o login com o usuário eyeflow para continuar a instalação
 # Siga as orientações na tela do equipamento, ao fazer o login, será solicitada a senha do usuário eyeflow novamente
-    ##########################################################
-    #    Resuming EDGE installation - Enter SUDO password    #
-    ##########################################################
-    [sudo] password for eyeflow:
+    #########################################################################
+    # returning from boot-resuming Edge <language> on <environment> Install #
+    #########################################################################
+# Entre com a senha SUDO do usuário eyeflow
+[sudo] password for eyeflow:
 # Aguarde completar a instalação, ao final verá a mensagem:
-    ##### end of script
-    <data e hora>
-    #################################################################
-    # LOG file at: /opt/eyeflow/install/edge-install<date time>.log #
-    #################################################################
+#################################################################
+#          Rebooting station to complete installation           #
+#################################################################
 
-    "##############################################"
-    "# Rebooting station to complete installation #"
-    "##############################################"
+#################################################################
+# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #
+#################################################################
 # Após o reboot a estação EDGE estará pronta para uso
 
 # Tempo estimado de execução:
