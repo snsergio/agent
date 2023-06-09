@@ -37,7 +37,9 @@ echo "##### Station GPU and Operating System information: #####"
 echo "GPU Card: $(lspci | grep -i nvidia)" | sudo tee -a /opt/eyeflow/install/edge-install.log
 echo "Operating system installed: $(lsb_release -si)" | sudo tee -a /opt/eyeflow/install/edge-install.log
 echo "OS version: $(lsb_release -sr)" | sudo tee -a /opt/eyeflow/install/edge-install.log
-cp ./install-edge.sh /opt/eyeflow/install/install-edge.sh
+if [ -f ./install-edge.sh ]; then
+    cp ./install-edge.sh /opt/eyeflow/install/install-edge.sh
+fi
 function choose_from_menu() {
     local prompt="$1" outvar="$2"
     shift
@@ -569,7 +571,7 @@ elif [ -f /opt/eyeflow/install/edge-option-3 ]; then
         wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
         chmod a+x install-monitor.sh
         echo "##### Calling metric collector install script #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        bash /opt/eyeflow/install/install-monitor.sh
+        source /opt/eyeflow/install/install-monitor.sh
         echo "##### Returning from metric collector install script #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
     fi
     echo "##### Removing temporary files #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
