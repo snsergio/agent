@@ -1,9 +1,92 @@
 Este guia aplica-se a dispositivos com arquitetura x86-64 bits e Sistema Operacional Ubuntu 22.04 LTS
+###################################################
+##### Instalação do Ubuntu 22.04 LTS - Server #####
+###################################################
+# Para Instalar UBUNTU SERVER 22.04 LTS siga as etapas abaixo
+######################################################
+# Requerimentos                                      #
+# Endereço IP (IPv4) do servidor com as informações: #
+#   - Subnet no formato xxx.xxx.xxx.xxx/yy           #
+#   - Endereço IP do servidor                        #
+#   - Endeteço IP do Gateway                         #
+#   - Endereços de DNS, normalmente 8.8.8.8, 8.8.4.4 #
+# Senha para o Usuário eyeflow                       #
+######################################################
+# Download da versão Ubuntu Server 22.04.2 LTS:
+https://releases.ubuntu.com/22.04.2/ubuntu-22.04.2-live-server-amd64.iso?_ga=2.264990991.1897287738.1684850903-132447652.1684850903
+# Tela GNU GRUB - Version 2.06 Selecione:
+*Try or Install Ubuntu Server
+# Tela Willkommen! Bienvenue! Welcome! Selecoine a opção default:
+English
+# Tela Installer update available Selecione a opção default:
+Continue without updating
+# Tela Keyboard configuration Selecione o teclado adequado entre as duas opções:
+# Opção 1:
+Layout: [English (US)] 
+Variant: [English (US)]
+# OU Opção 2:
+Layout: [Portuguese (Brazil)] 
+Variant: [Portuguese (Brazil)]
+# em seguida selecione [Done]
+# Tela Choose type of install Selecione a opção default:
+(X) Ubuntu Server
+[Done]
+# Tela Network connections Selecione a conexão ativa e faça as configurações
+- Edit IPv4
+  - IPv4 Method: Manual
+  - Subnet: Entre com a rede no formato xxx.xxx.xxx.xxx/yy
+  - Address: Entre com o endereço IP do servidor
+  - Gateway: Entre com o endeteço IP do Gateway 
+  - Name Servers: Entre com os endereços de DNS, normalmente 8.8.8.8, 8.8.4.4
+  - Search domains: deixe em branco
+  [Save]
+  [Done]
+# Tela Configure Proxy - Deixe em branco e clique
+[Done]
+# Tela Configure Ubuntu archive mirror Deixe a informação default e clique
+[Done]
+# Caso apareça a tela Installer Update Available Clique:
+[Continue without updating]
+# Tela Guided Storage configuration Selecione:
+(X) Use an entire disk
+# Mantenha todas as configurações default
+Certifique que o default [X] Set up this disk as an LVM group (está selecionado)
+Mantenha o default (não selecionado)
+[ ] Encrypt the LVM group with LUKS
+clique [Done]
+# Tela Storage configuration: Mantenha o default e clique:
+[Done]
+# Na mensagem Confirm destructive action Clique:
+[Continue]
+# Tela Profile setup
+  - Your name: eyeflow
+  - Your server's name: <Entre com o nome do servidor>
+  - Pick a username: eyeflow
+  - Choose a password <Entre com a senha do usuário eyeflow>
+  - Confirm your password: <repita a senha do usuário eyeflow>
+[Done]
+# Tela Upgrade to Ubuntu Pro Mantenha o default:
+(X) Skip for now
+[Continue]
+# Tela SSH Setup Selecione:
+[X] Install OpenSSH server
+Mantenha o default em Import SSH identty:
+Import SSH identity: [No]
+[Done]
+# Tela Featured Server Snaps Mantenha o default, não selecione nenhuma opção
+[Done]
+# Aguarde a conclusão da instalação - aparecerá a opção Reboot Now
+[Reboot Now]
+Se aparecer a mensagem Remove CD-ROM e clique ENTER: pressione <ENTER>
+aguarde o reboot
+# Caso a tela fique na última mensagem [ OK ] Reached target Cloud-init target
+# tecle <enter> para aparecer a menssagem de login
 
+########################################################################
 ##### Instalação do Eyeflow EDGE em servidor remoto                #####
 #####     Versão Eyeflow Python em dispositivo físico ou em Docker #####
 #####     Versão Eyeflow C++ em Docker - em construção             #####
-
+########################################################################
 # Para Instalar EYEFLOW EDGE siga as etapas abaixo
 ######################################################
 # Requerimentos                                      #
@@ -74,8 +157,10 @@ sudo ./install-edge.sh
 #    RETORNO DO BOOT: 00:10:43
 #    TERMINO:         00:32:36
 #-----------------------------
-#######################################################################################
-#####             Instalação do Agente de monitoração em estação EDGE             #####
+###############################################################
+##### Instalação do Agente de monitoração em estação EDGE #####
+###############################################################
+# Para Instalar o AGENTE DE MONITORAÇÃO siga as etapas abaixo
 #######################################################################################
 # Requerimentos                                                                       #
 #     Informações de configuração de monitoramento                                    #
