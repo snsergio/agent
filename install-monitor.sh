@@ -57,7 +57,7 @@ echo "# Edit Monitoring Agent configuration file to reflect Edge Station require
 echo "#   Press <ENTER> to edit or <CTRL-C> to cancel Monitoring Agent instalation    #"
 echo "#################################################################################"
 read -s -n 1
-nano /opt/eyeflow/monitor/collector-config.yaml
+nano /opt/eyeflow/monitor/collector-config-v4.yaml
 echo "##### Copying metric collector service to systemd" | sudo tee -a $LOGFILE
 cp /opt/eyeflow/monitor/metric-collector.service /etc/systemd/system/. 
 echo "##### Starting collector agent" | sudo tee -a $LOGFILE
