@@ -580,4 +580,5 @@ echo "#################################################################"
 echo "# LOG file at: /opt/eyeflow/install/edge-install<date time>.log #"
 echo "#################################################################"
 mv /opt/eyeflow/install/edge-install.log /opt/eyeflow/install/edge-install-$(date +%F-%H:%M).log
+sleep 5
 reboot
