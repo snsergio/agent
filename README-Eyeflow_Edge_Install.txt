@@ -131,7 +131,7 @@ sudo ./install-edge.sh
 # Aguarde completar a instalação, ao final verá a mensagem:
 # ###############################################
 # #####   end of EDGE installation script   #####
-# #####    <llanguage> on <environment>     #####
+# #####     <language> on <environment>     #####
 #
 # Instruções para instalar o agente de monitoração, caso queira instalar no EDGE:
 # ######################################################################################
@@ -149,8 +149,14 @@ sudo ./install-edge.sh
 # LOG file at: /opt/eyeflow/install/edge-install<date time>.log #
 #################################################################
 # Após o reboot a estação EDGE estará pronta para uso
+#
+# Ao instalar as versões para DOCKER estarão disponíveis instruções para executar o Eyeflow EDGE
+############################################################################################
+# Instructions to run Eyeflow Edge at: /opt/eyeflow/install/how-execute-eyeflow-docker.txt #
+############################################################################################
+As instruções também estarão na tela
 # 
-# Tempo estimado de execução:
+# Tempo estimado de execução da versão Edge em servidor físico (o mais lento):
 #                     hh:mm:ss
 #    INICIO:          00:00:00
 #    REBOOT:          00:05:08
