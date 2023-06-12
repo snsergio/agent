@@ -66,6 +66,7 @@ systemctl start metric-collector.service
 systemctl status metric-collector.service | sudo tee -a $LOGFILE
 echo "##### Remove temporary files" | sudo tee -a $LOGFILE
 rm -f /home/eyeflow/install-monitor.sh
+rm -rf /opt/eyeflow/install/agent
 echo "###########################################################" | sudo tee -a $LOGFILE
 echo "#####   end of Metric Collector installation script   #####" | sudo tee -a $LOGFILE
 echo "##### Finished at: $(date)" | sudo tee -a $LOGFILE
