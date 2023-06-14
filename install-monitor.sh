@@ -32,7 +32,7 @@ echo "##### running installation script.." | sudo tee -a $LOGFILE
 apt update | sudo tee -a $LOGFILE
 apt -y upgrade | sudo tee -a $LOGFILE
 echo "##### Installing initial packages" | sudo tee -a $LOGFILE
-apt install -y curl lm-sensors sysstat iproute2 python3-requests python3-pip
+apt install -y curl lm-sensors sysstat netcat iproute2 python3-requests python3-pip
 echo "##### Installing GIT:" | sudo tee -a $LOGFILE
 apt install -y git acl
 echo "##### Install PIP packages" | sudo tee -a $LOGFILE
