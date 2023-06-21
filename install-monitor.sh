@@ -38,8 +38,8 @@ apt install -y git acl
 echo "##### Install PIP packages" | sudo tee -a $LOGFILE
 /usr/bin/python3 -m pip install xmltodict==0.13.0 \
     prometheus_client==0.16.0 \
-    requests==2.28.2 \
-    PyYAML==6.0
+    requests \
+    PyYAML
 mkdir -p /opt/eyeflow/monitor/lib
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
