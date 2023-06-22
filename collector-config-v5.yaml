@@ -2,35 +2,35 @@
 # v5.00 ############################################################################################
 # EDGE Station information
 stationID:                                 # Station's Customer-specific configuration
-  customerName: HPE                        # Customer / Client Name or Identification
-  stationName: hpe-cec                     # Set here the Station name (specific for the customer)
+  customerName:                            # Customer / Client Name or Identification
+  stationName:                             # Set here the Station name (specific for the customer)
   StationIP:                               # Host's IP to verify if not has been changed (in situations where host IP must be fixed)
-    - 187.0.173.85                         # List of IPs if more than 1
+    - 192.168.173.85                       # List of IPs if more than 1
 # Metric RTDB URL and TLS ##################
 prometheusPush:                            # Environment variables - metric collector operation information
-  pushUrl: gpu-pgw.eyeflow.ai              # Main pushgateway URL
-  pushUrl2: station-pgw.eyeflow.ai:9091    # Secondary pushgateway URL - Usually Eyeflow's edge servers pushgateway URL
+  pushUrl:                                 # Main pushgateway URL
+  pushUrl2:                                # Secondary pushgateway URL - Usually Eyeflow's edge servers pushgateway URL
 tls:                                       # Pushgateway TLS information, configure pushUrl and pushurl2 parameters accordingly
   pushUrl_TLS: true                        #   use true only if pushgateway has TLS enabled and only false if hasn't
-  pushUrl_TLS_Username: remote             #   TLS auth username
-  pushUrl_TLS_Password: YzJ4aGFTNXpiR0Zw   #   TLS auth password
+  pushUrl_TLS_Username:                    #   TLS auth username
+  pushUrl_TLS_Password:                    #   TLS auth password
   pushUrl2_TLS: false                      #   use true only if pushgateway has TLS enabled and only false if hasn't
-  pushUrl2_TLS_Username: remote            #   TLS auth username
-  pushUrl2_TLS_Password: YzJ4aGFTNXpiR0Zw  #   TLS auth password
+  pushUrl2_TLS_Username:                   #   TLS auth username
+  pushUrl2_TLS_Password:                   #   TLS auth password
 # Metric collector configuration ###########
 agentPath:                                 # Metric collector files path
-  logPath: ./wsl/docker/metric-collector-v5/ #/opt/eyeflow/monitor            # PATH to save log file (monitoring.log)
-  scriptPath: ./wsl/docker/metric-collector-v5/ #/opt/eyeflow/monitor         # PATH where collector agent is (metric-collector.py)
+  logPath: /opt/eyeflow/monitor            # PATH to save log file (monitoring.log)
+  scriptPath: /opt/eyeflow/monitor         # PATH where collector agent is (metric-collector.py)
 metricDetails: full                        # Metrics to capture, check capture metrics settings: light: simplified set; full: full set (high storage usage)
 debugMode: false                           # Debug metric collector execution or not-If true, more log data sent to log file (lots of disk space)
 restart:                                   # Service information if metric collector should restart or not specified services (use with care)
   camRestart: false                        # Auto restart for camera API
   sysAgentRestart: false                   # Auto restart for Sys Agent service
-  suAccess: "sa.KT9zrGYeg2"                # Auto restart token
+  suAccess:                                # Auto restart token
 update:                                    # Metric collector update actions
   autoUpdate: true                         # Metric collector will check API for newer component versions and download them
   autoRestart: true                        # If enabled, metric collector will restart after update components
-  updateUrl: "http://172.173.242.132:9199" # API URL
+  updateUrl: "http://192.168.242.132:9199" # API URL
   updateAccesstoken: ""                    # API Access information
 # Station metrics to capture ############### CaptureMetrics takes precedence over metricDetails, except for true/false values when metricDetails ovewrites
 captureMetrics:                            # Metrics to capture (0, false: don't capture; 1, true, ligh: capture simplified set; 2, full: capture full set)
@@ -52,7 +52,7 @@ captureMetrics:                            # Metrics to capture (0, false: don't
   topOsProcess: true                       # Capture Ubuntu top active processes and their activity (<n> is set on topProcessCount)
 # Metrics additional information ###########
 apiUrl:                                    # IP and port to test GET response, for example: Sensor in production line
-  - http://172.173.242.132:9199            # List of API URL to check GET response (==2xx or !=2xx)
+  - http://192.168.242.132:9199            # List of API URL to check GET response (==2xx or !=2xx)
 backup:                                    # Backup routine details
   folder: "/home/ubuntu/temp"              # Folder where data is stored (complete path)
   filePrefix:                              # Backup file common prefix - both prefix and suffix filters are applied
@@ -67,8 +67,7 @@ dockerExceptList:                          # List of Docker container keywords t
 ipPingList:                                # List of IPs to perform PING test to check connectivity
   - 8.8.8.8                                #
 monitoredOsProcessList:                    # List of Ubuntu processes keywords to verify if is running at host and capture basic metrics
-  - call_flow                              #    - must contain a name or must be empty - this paramenter do not accept 'all' keywork
-  - metric-collector                       #
+  - metric-collector                       #    - must contain a name or must be empty - this paramenter do not accept 'all' keywork
 remoteOpenList:                            # List of IP:PORT to check if is open or listening
   - 192.168.0.1:2000                       # Format: <URL> or <IP>:<PORT>
 topOsProcessCount: 3                       # Number of 'top offender processes' to capture data (if captureMetrics/topProcess is set to true)
