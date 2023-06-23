@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metric-collector-v5.00-beta-test"
+versao = "metric-collector-v5.01-beta-test"
 #######################################################################################################################
 import logging 
 #######################################################################################################################
@@ -14,6 +14,7 @@ def get_metrics(configDict):
             "diskMetrics": 0,
             "dockerMetrics": 0,
             "gpuMetrics": 0,
+            "jetsonMetrics": 0,
             "pingMetrics": 0,
             "monOsProcMetrics": 0,
             "netMetrics": 0,
@@ -30,6 +31,7 @@ def get_metrics(configDict):
             "diskMetrics": 0,
             "dockerMetrics": 0,
             "gpuMetrics": 0,
+            "jetsonMetrics": 0,
             "pingMetrics": 0,
             "monOsProcMetrics": 0,
             "netMetrics": 0,
@@ -83,8 +85,14 @@ def get_metrics(configDict):
                 configDict["dockerExceptList"])
             resposta["dockerMetrics"] = retorno
             collLatency["dockerMetrics"] = time.time() - inicio
-        if configDict["getGpuNvidia"]:
+        if configDict["getGpu"]:
             inicio = time.time()
+            if configDict["cpuArch"] == "x86_64":
+                configDict["getGpuNvidia"] = configDict["getGpu"]
+                configDict["getJetson"] = 0
+            elif configDict["cpuArch"] == "aarch64":
+                configDict["getGpuNvidia"] = 0
+                configDict["getJetson"] = configDict["getGpu"]
             from lib import metricgpu as gpu
             resposta["gpuMetrics"] = gpu.gpu_exec.collect_gpu(
                 configDict["getGpuNvidia"])
