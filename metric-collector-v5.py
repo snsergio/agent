@@ -90,12 +90,15 @@ def get_metrics(configDict):
             if configDict["cpuArch"] == "x86_64":
                 configDict["getGpuNvidia"] = configDict["getGpu"]
                 configDict["getJetson"] = 0
+                from lib import metricgpu as gpu
+                resposta["gpuMetrics"] = gpu.gpu_exec.collect_gpu(
+                    configDict["getGpuNvidia"])
             elif configDict["cpuArch"] == "aarch64":
                 configDict["getGpuNvidia"] = 0
                 configDict["getJetson"] = configDict["getGpu"]
-            from lib import metricgpu as gpu
-            resposta["gpuMetrics"] = gpu.gpu_exec.collect_gpu(
-                configDict["getGpuNvidia"])
+                from lib import metricjetson as jet
+                resposta["jetsonMetrics"] = jet.jetson_exec.collect_jetson(
+                    configDict["getJetson"])
             collLatency["gpuMetrics"] = time.time() - inicio
         if configDict["getIpPing"]:
             inicio = time.time()
