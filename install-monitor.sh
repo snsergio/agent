@@ -40,6 +40,11 @@ echo "##### Install PIP packages" | sudo tee -a $LOGFILE
     prometheus_client==0.16.0 \
     requests \
     PyYAML
+if [ $("uname -i") == "aarch64" ]; then
+    python3 -m pip install -U jetson-stats
+    cd /usr/local/cuda/samples/1_Utilities/deviceQuery
+    make
+    cd ~
 mkdir -p /opt/eyeflow/monitor/lib
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
