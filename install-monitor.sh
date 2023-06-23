@@ -45,6 +45,7 @@ if [ $("uname -i") == "aarch64" ]; then
     cd /usr/local/cuda/samples/1_Utilities/deviceQuery
     make
     cd ~
+fi
 mkdir -p /opt/eyeflow/monitor/lib
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
