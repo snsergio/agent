@@ -1,11 +1,11 @@
 # Monitoring config file for metric collector v5-beta-test #########################################
-# v5.00 ############################################################################################
+# v5.01 ############################################################################################
 # EDGE Station information
 stationID:                                 # Station's Customer-specific configuration
-  customerName:                            # Customer / Client Name or Identification
-  stationName:                             # Set here the Station name (specific for the customer)
+  customerName: Siliconlife                # Customer / Client Name or Identification
+  stationName: edge                        # Set here the Station name (specific for the customer)
   StationIP:                               # Host's IP to verify if not has been changed (in situations where host IP must be fixed)
-    - 192.168.173.85                       # List of IPs if more than 1
+    - 192.168.173.85                         # List of IPs if more than 1
 # Metric RTDB URL and TLS ##################
 prometheusPush:                            # Environment variables - metric collector operation information
   pushUrl:                                 # Main pushgateway URL
@@ -26,11 +26,11 @@ debugMode: false                           # Debug metric collector execution or
 restart:                                   # Service information if metric collector should restart or not specified services (use with care)
   camRestart: false                        # Auto restart for camera API
   sysAgentRestart: false                   # Auto restart for Sys Agent service
-  suAccess:                                # Auto restart token
+  suAccess: "sa.KT9zrGYeg2"                # Auto restart token
 update:                                    # Metric collector update actions
-  autoUpdate: true                         # Metric collector will check API for newer component versions and download them
-  autoRestart: true                        # If enabled, metric collector will restart after update components
-  updateUrl: "http://192.168.242.132:9199" # API URL
+  autoUpdate: false                        # Metric collector will check API for newer component versions and download them
+  autoRestart: false                       # If enabled, metric collector will restart after update components
+  updateUrl:                               # API URL
   updateAccesstoken: ""                    # API Access information
 # Station metrics to capture ############### CaptureMetrics takes precedence over metricDetails, except for true/false values when metricDetails ovewrites
 captureMetrics:                            # Metrics to capture (0, false: don't capture; 1, true, ligh: capture simplified set; 2, full: capture full set)
@@ -40,7 +40,7 @@ captureMetrics:                            # Metrics to capture (0, false: don't
   cameraApi: true                          # Camera status from API on camUrl endpoint
   disk: true                               # Capture disk metrics
   docker: true                             # Capture docker containers - must configure dockerList and docker ExceptList
-  gpuNvidia: true                          # Capture GPU metrics (Nvidia metrics only)
+  gpu: true                                # Capture GPU metrics (Nvidia metrics only, either on x86 or ARM/Jetson Architecture)
   ipPing: true                             # Veirfy ping response on specified IP ping list (environment/pingList)
   monitoredOsProcess: true                 # Capture Ubuntu process activity on processes that need to be present - list on monitordOsProcess
   network: true                            # Capture network metrics
@@ -54,9 +54,9 @@ captureMetrics:                            # Metrics to capture (0, false: don't
 apiUrl:                                    # IP and port to test GET response, for example: Sensor in production line
   - http://192.168.242.132:9199            # List of API URL to check GET response (==2xx or !=2xx)
 backup:                                    # Backup routine details
-  folder: "/home/ubuntu/temp"              # Folder where data is stored (complete path)
+  folder: "/usr/backup"                    # Folder where data is stored (complete path)
   filePrefix:                              # Backup file common prefix - both prefix and suffix filters are applied
-  fileSuffix: .yml                         # Backup file common suffix - both prefix and suffix filters are applied
+  fileSuffix: .bkp                         # Backup file common suffix - both prefix and suffix filters are applied
   frequency: 1d                            # Backup frequency - monthly (m), daily (d), hourly (h) - ex: 7d (weekly); 12h (twice a day)
 camUrl:                                    # Eyeflow's camera detection component URL and port number
   - http://192.168.2.41:2000               # IP and port to access CAMERA API
