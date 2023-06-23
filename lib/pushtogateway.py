@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "pushtogateway-v5.00-beta-test"
+versao = "pushtogateway-v5.01-beta-test"
 #######################################################################################################################
 import logging
 import time
@@ -86,6 +86,25 @@ class push_data:
             self.gpuTempTarget = Gauge("gpu_temp_target", "GPU Operating Target Temperature", ["customer", "station", "host", "card"], registry=self.registry)
             self.gpuPowerLimit = Gauge("gpu_power_limit", "GPU Power Upper Limit", ["customer", "station", "host", "card"], registry=self.registry)
             self.gpuPowerMax = Gauge("gpu_power_max", "GPU Maximum Power", ["customer", "station", "host", "card"], registry=self.registry)
+        if configDict["getJetson"] == 2:
+            self.jetsonCpuTotal = Gauge("jetson_cpu_total", "Jetson Card Total CPU Count (on+off)", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonPowerThermal = Gauge("jetson_power_thermal", "Jetson Card Power Thermal", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonTempWifi = Gauge("jetson_wifi_temp", "Jetson Card WiFi Temperature", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonNvpModel = Info("jetson_nvp_model", "Jetson Card NVP Model", ["customer", "station", "host", "card"], registry=self.registry)
+        if configDict["getJetson"] >= 1:
+            self.jetsonCuda = Gauge("jetson_cuda", "Jetson Card CUDA Version", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonDriver = Gauge("jetson_driver", "Jetson Card Driver Version", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonFanPercent = Gauge("jetson_fan_pct", "Jetson Card FAN PWM Percent", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonGpuUse = Gauge("jetson_gpu_utilization", "Jetson Card GPU Utilization", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonMemTotalMB = Gauge("jetson_total_memory", "Jetson Card Memory Total", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonPower = Gauge("jetson_power", "Jetson Card Power utilization mW", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonMemUsed = Gauge("jetson_memory_utilization", "Jetson Card Memory Utilization", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonTempBoard = Gauge("jetson_temp_board", "Jetson Card Board Temperature", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonTempCpu = Gauge("jetson_temp_cpu", "Jetson Card CPU Temperature", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonTempGpu = Gauge("jetson_temp_gpu", "Jetson Card GPU Temperature", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonTime = Gauge("jetson_time", "Jetson Card Time Clock", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonUptime = Gauge("jetson_uptime", "Jetson Card Uptime Seconds", ["customer", "station", "host", "card"], registry=self.registry)
+            self.jetsonName = Info("jetson_name", "Jetson Card GPU Name", ["customer", "station", "host", "card"], registry=self.registry)
         # Metric Ping
         if configDict["getIpPing"] >= 1:
             self.pingtime = Gauge("ping_exec_time", "Ping time execution", ["customer", "station", "host", "ipaddr"], registry=self.registry)
@@ -158,6 +177,10 @@ class push_data:
             self.topProcMEM = Gauge("top_process_mem", "Running Top Offender Process Memory Usage", ["customer", "station", "host", "rank", "filter"], registry=self.registry)
             self.topProcPID = Gauge("top_process_pid", "Running Top Offender Process PID", ["customer", "station", "host", "rank", "filter"], registry=self.registry)
             self.topProcName = Info("top_process_name", "Running Top Offender Process Name", ["customer", "station", "host", "rank", "filter"], registry=self.registry)
+        self.hostArch = Info("station_architecture", "Station CPU Architecture", ["customer", "station", "host"], registry=self.registry)
+        self.hostOsBit = Gauge("station_os_bit_lenght", "Station OS bit lenght", ["customer", "station", "host"], registry=self.registry)
+        self.hostVendorID = Info("station_vendor_id", "Station's Vendor ID", ["customer", "station", "host"], registry=self.registry)
+        self.hostModel = Info("station_model_name", "Station's Model Name", ["customer", "station", "host"], registry=self.registry)
         self.collectorVersion = Info("agent_version", "Collector Agent Version", ["customer", "station", "host"], registry=self.registry)
         self.heartBeat = Gauge("station_heartbeat", "Station Heartbeat", ["customer", "station", "host"], registry=self.registry)
         return
@@ -226,6 +249,25 @@ class push_data:
             self.gpuTempTarget.clear()
             self.gpuPowerLimit.clear()
             self.gpuPowerMax.clear()
+        if self.configDict["getJetson"] == 2:
+            self.jetsonCpuTotal.clear()
+            self.jetsonPowerThermal.clear()
+            self.jetsonTempWifi.clear()
+            self.jetsonNvpModel.clear()
+        if self.configDict["getJetson"] >= 1:
+            self.jetsonCuda.clear()
+            self.jetsonDriver.clear()
+            self.jetsonFanPercent.clear()
+            self.jetsonGpuUse.clear()
+            self.jetsonMemTotalMB.clear()
+            self.jetsonPower.clear()
+            self.jetsonMemUsed.clear()
+            self.jetsonTempBoard.clear()
+            self.jetsonTempCpu.clear()
+            self.jetsonTempGpu.clear()
+            self.jetsonTime.clear()
+            self.jetsonUptime.clear()
+            self.jetsonName.clear()
         if self.configDict["getIpPing"] >= 1:
             self.pingtime.clear()
             self.pingLoss.clear()
@@ -289,6 +331,10 @@ class push_data:
             self.topProcMEM.clear()
             self.topProcPID.clear()
             self.topProcName.clear()
+        self.hostArch.clear()
+        self.hostOsBit.clear()
+        self.hostVendorID.clear()
+        self.hostModel.clear()
         self.collectorVersion.clear()
         self.heartBeat.clear()
         return
@@ -376,6 +422,26 @@ class push_data:
                 self.gpuTempTarget.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["gpuMetrics"]["card"]).set(self.metricDict["gpuMetrics"]["tempTarget"])
                 self.gpuPowerLimit.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["gpuMetrics"]["card"]).set(self.metricDict["gpuMetrics"]["powerLimit"])
                 self.gpuPowerMax.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["gpuMetrics"]["card"]).set(self.metricDict["gpuMetrics"]["powerMax"])
+        # Metric Jetson GPU
+        if self.configDict["getJetson"] == 2:
+            self.jetsonCpuTotal.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["cpuTotalCount"])
+            self.jetsonPowerThermal.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["powerThermal"])
+            self.jetsonTempWifi.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["tempWifi"])
+            self.jetsonNvpModel.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).info({"jetson_nvp_model": self.metricDict["jetsonMetrics"]["nvpModel"]})
+        if self.configDict["getJetson"] >= 1:
+            self.jetsonCuda.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["cuda"])
+            self.jetsonDriver.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["driver"])
+            self.jetsonFanPercent.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["fanPercent"])
+            self.jetsonGpuUse.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["gpuUse"])
+            self.jetsonMemTotalMB.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["memTotalMB"])
+            self.jetsonPower.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["powerTotal"])
+            self.jetsonMemUsed.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["ramUsed"])
+            self.jetsonTempBoard.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["tempBoard"])
+            self.jetsonTempCpu.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["tempCPU"])
+            self.jetsonTempGpu.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["tempGPU"])
+            self.jetsonTime.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["time"])
+            self.jetsonUptime.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).set(self.metricDict["jetsonMetrics"]["uptime"])
+            self.jetsonName.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], card=self.metricDict["jetsonMetrics"]["card"]).info({"jetson_name": self.metricDict["jetsonMetrics"]["gpuName"]})
         # Metric Ping
         if self.configDict["getIpPing"] >= 1:
             for item in range(len(self.metricDict["pingMetrics"])):
@@ -458,6 +524,10 @@ class push_data:
                 self.topProcMEM.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], rank=self.metricDict["topMetrics"][element]["rank"], filter=str(self.metricDict["topMetrics"][element]["rank"])+"-"+self.configDict["hostName"]).set(self.metricDict["topMetrics"][element]["mem"])
                 self.topProcPID.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], rank=self.metricDict["topMetrics"][element]["rank"], filter=str(self.metricDict["topMetrics"][element]["rank"])+"-"+self.configDict["hostName"]).set(self.metricDict["topMetrics"][element]["pid"])
                 self.topProcName.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], rank=self.metricDict["topMetrics"][element]["rank"], filter=str(self.metricDict["topMetrics"][element]["rank"])+"-"+self.configDict["hostName"]).info({"top_process_name": self.metricDict["topMetrics"][element]["cmd"]})
+        self.hostArch.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).info({"station_architecture": self.configDict["cpuArch"]})
+        self.hostOsBit.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).set(self.configDict["cpuBit"])
+        self.hostVendorID.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).info({"station_vendor_id": self.configDict["cpuVendor"]})
+        self.hostModel.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).info({"station_model_name": self.configDict["cpuModelName"]})
         self.collectorVersion.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).info({"agent_version": versao})
         self.heartBeat.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).set(time.time())
         return
