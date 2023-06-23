@@ -40,7 +40,7 @@ echo "##### Install PIP packages" | sudo tee -a $LOGFILE
     prometheus_client==0.16.0 \
     requests \
     PyYAML
-if [ $("uname -i") == "aarch64" ]; then
+if [ $(uname -i) == "aarch64" ]; then
     python3 -m pip install -U jetson-stats
     cd /usr/local/cuda/samples/1_Utilities/deviceQuery
     make
