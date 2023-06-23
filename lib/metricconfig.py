@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.00-beta-test"
+versao = "metricconfig-v5.01-beta-test"
 #######################################################################################################################
 import logging
 import time
@@ -23,6 +23,9 @@ class config_setup:
         import yaml
         from pathlib import Path
         configPath = os.environ.get('CONFIGPATH')
+        metric_attributes.resposta["cpuArch"] = "invalid"
+        metric_attributes.resposta["cpuVendor"] = "invalid"
+        metric_attributes.resposta["cpuModelName"] = "invalid"
         metric_attributes.resposta["hostName"] = "myhost"
         if configPath == None: 
             logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-config_setup.get_config: Env var CONFIGPATH not set, changing to CWD")
@@ -54,6 +57,11 @@ class config_setup:
                 if "Architecture" in infoout[item]: metric_attributes.resposta["cpuArch"] = infoout[item].split(":")[1].strip()
                 if "Vendor ID" in infoout[item]: metric_attributes.resposta["cpuVendor"] = infoout[item].split(":")[1].strip()
                 if "Model name" in infoout[item]: metric_attributes.resposta["cpuModelName"] = infoout[item].split(":")[1].strip()
+        try: bitout = c.exec_cmd(["getconf", "LONG_BIT"], c.debugMode)["output"]
+        except: 
+            if not c.logFirstRun: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-config_setup.get_config: CPU Bit lenght error")
+            bitout = 0
+        if bitout != 0: metric_attributes.resposta["cpuBit"] = int(bitout)
         del os, yaml, Path
         return metric_attributes.validate(config_setup.configDict)
         #----------------------------------------------------------------------------------------------------------------------
@@ -174,16 +182,13 @@ class metric_attributes:
         #----------------------------------------------------------------------------------------------------------------------
     # Get capture_metrics information from configuration file
     def get_capture(configDict):
-        metric_attributes.resposta["cpuArch"] = "invalid"
-        metric_attributes.resposta["cpuVendor"] = "invalid"
-        metric_attributes.resposta["cpuModelName"] = "invalid"
         metric_attributes.resposta["captureInterval"] = 15
         metric_attributes.resposta["getApiGet"] = 0
         metric_attributes.resposta["getBackup"] = 0
         metric_attributes.resposta["getCam"] = 0
         metric_attributes.resposta["getDisk"] = 0
         metric_attributes.resposta["getDocker"] = 0
-        metric_attributes.resposta["getGpuNvidia"] = 0
+        metric_attributes.resposta["getGpu"] = 0
         metric_attributes.resposta["getIpPing"] = 0
         metric_attributes.resposta["getMonOsProc"] = 0
         metric_attributes.resposta["getNetwork"] = 0
@@ -224,7 +229,7 @@ class metric_attributes:
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/disk not set. Assuming 'false'")
         try: metric_attributes.resposta["getDocker"] = metric_attributes.validate_capture(configDict["captureMetrics"]["docker"])
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/docker not set. Assuming 'false'")
-        try: metric_attributes.resposta["getGpuNvidia"] = metric_attributes.validate_capture(configDict["captureMetrics"]["gpuNvidia"])
+        try: metric_attributes.resposta["getGpu"] = metric_attributes.validate_capture(configDict["captureMetrics"]["gpu"])
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/gpuNvidia not set. Assuming 'false'")
         try: metric_attributes.resposta["getIpPing"] = metric_attributes.validate_capture(configDict["captureMetrics"]["ipPing"])
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/ipPing not set. Assuming 'false'")
