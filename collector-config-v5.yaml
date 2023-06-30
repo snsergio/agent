@@ -1,0 +1,148 @@
+# Monitoring config file for metric collector v5-beta-test #############################################
+# v5.00 ################################################################################################
+# EDGE Station information #############################################################################
+# Station ID used to set Station's Customer-specific configuration
+#     customerName: set using Customer / Client Name or Identification
+#     stationName: Set here the Station identification name (specific for the customer)
+#     StationIP: Host's IP to verify if not has been changed (in situations where host IP must be fixed)
+#         May have none, one or many IP addresses
+stationID:
+  customerName: 
+  stationName: 
+  StationIP:
+    - 
+#-------------------------------------------------------------------------------------------------------
+# Metric RTDB URL and TLS ##############################################################################
+# Environment variables for metric collector operation
+#     pushUrl: Main pushgateway URL
+#     pushUrl2: Secondary pushgateway URL - Usually Eyeflow's edge servers pushgateway URL
+# tls: Pushgateway TLS information, configure pushUrl and pushurl2 parameters accordingly
+#     pushUrl(2)_TLS: use true only if pushgateway(2) has TLS enabled and only false if hasn't
+#     pushUrl(2)_TLS_Username: TLS auth username
+#     pushUrl(2)_TLS_Password: TLS auth password (base64-encoded)
+prometheusPush:
+  pushUrl: pushgateway.eyeflow.ai
+  pushUrl2: 
+tls:
+  pushUrl_TLS: false
+  pushUrl_TLS_Username: 
+  pushUrl_TLS_Password: 
+  pushUrl2_TLS: false
+  pushUrl2_TLS_Username: 
+  pushUrl2_TLS_Password: 
+#-------------------------------------------------------------------------------------------------------
+# Metric collector configuration #######################################################################
+# Metric collector files path
+#     logPath: PATH to save log file (monitoring.log)
+#     scriptPath: PATH where collector agent is (metric-collector.py)
+agentPath:
+  logPath: /opt/eyeflow/monitor
+  scriptPath: /opt/eyeflow/monitor
+#-------------------------------------------------------------------------------------------------------
+# metricDetails: Metrics to capture, check capture metrics settings: light: simplified set; full: full set (high storage usage)
+# debugMode: Debug metric collector execution or not-If true, more log data sent to log file (lots of disk space)
+# restart: Service information if metric collector should restart or not specified services (use with care)
+#     camRestart: Auto restart for camera API
+#     sysAgentRestart: Auto restart for Sys Agent service
+#     suAccess: Auto restart token
+metricDetails: full
+debugMode: false
+restart:
+  camRestart: false
+  sysAgentRestart: false
+  suAccess: 
+#-------------------------------------------------------------------------------------------------------
+# Metric collector update actions ######################################################################
+#     autoUpdate: Metric collector will check API for newer component versions and download them
+#     autoRestart: If enabled, metric collector will restart after update components
+#     updateUrl: Update API URL
+#     updateAccesstoken: Update API Access information
+update:
+  autoUpdate: false
+  autoRestart: false
+  updateUrl: 
+  updateAccesstoken: 
+#-------------------------------------------------------------------------------------------------------
+# Station metrics to capture ###########################################################################
+# Metrics to capture (0, false: don't capture; 1, true, ligh: capture simplified set; 2, full: capture full set)
+# CaptureMetrics takes precedence over metricDetails, except for true/false values when metricDetails ovewrites
+#     captureInterval:    Time interval to run metrics collector on host - tipically between 10s and 30s
+#     apiGet:             Capture REST GET response from URL:PORT endpoint listed in apiUrl list, example: Line Sensors
+#     backup:             Check backup success based on specific backup informarion details 
+#     cameraApi:          Camera status from API on camUrl endpoint
+#     disk:               Capture disk metrics
+#     docker:             Capture docker containers - must configure dockerList and docker ExceptList
+#     gpu:                Capture GPU metrics (Nvidia metrics only, either on x86 or ARM/Jetson Architecture)
+#     ipPing:             Veirfy ping response on specified IP ping list (environment/pingList)
+#     monitoredOsProcess: Capture Ubuntu process activity on processes that need to be present - list on monitordOsProcess
+#     network:            Capture network metrics
+#     remoteOpenStatus:   Check if IP:PORT on remote device is listening or open - listed in remoteOpenList 
+#     selfIP:             Verify if any of host's UP NICs IPv4 addresses match specified Station ID IP list (StationIP)
+#     sensor:             Capture sensor metrics (must have Ubuntu's sensor-lm package installed)
+#     server:             Capture host's hardware metrics
+#     sysAgent:           Verify if Eyeflow's sysagent service is running
+#     topOsProcess:       Capture Ubuntu top active processes and their activity (<n> is set on topProcessCount)
+captureMetrics:                            
+  captureInterval: 10s
+  apiGet: true
+  backup: true
+  cameraApi: true
+  disk: true
+  docker: true
+  gpu: true
+  ipPing: true
+  monitoredOsProcess: true
+  network: true
+  remoteOpenStatus: true
+  selfIP: true
+  sensor: true
+  server: true
+  sysAgent: true
+  topOsProcess: true
+#-------------------------------------------------------------------------------------------------------
+# Metrics additional information ###########
+# apiUrl: List IP and port to test GET response, for example: Sensor in production line. Check GET response (==2xx or !=2xx)
+apiUrl:                                    
+  -             
+#-------------------------------------------------------------------------------------------------------
+# backup: Backup routine details
+#     folder:     Folder where data is stored (complete path)
+#     filePrefix: Backup file common prefix - both prefix and suffix filters are applied
+#     fileSuffix: Backup file common suffix - both prefix and suffix filters are applied
+#     frequency: Backup frequency - monthly (m), daily (d), hourly (h) - ex: 7d (weekly); 12h (twice a day)
+backup:
+  folder: 
+  filePrefix:
+  fileSuffix: 
+  frequency: 1d
+#-------------------------------------------------------------------------------------------------------
+# Eyeflow's camera detection component URL and port number
+# camUrl: IP and port list to access CAMERA API
+camUrl:
+  - 
+#-------------------------------------------------------------------------------------------------------
+# List of Docker container keywords (or all) to verify if is running at host and capture active time
+#     dockerList: Must be 'all' or container name list
+#     dockerExceptList: List of Docker container keywords to exclude (do not capture active time) - Must be none or container name list
+dockerList:
+  - all
+dockerExceptList:
+  - none
+#-------------------------------------------------------------------------------------------------------
+# ipPingList: List of IPs to perform PING test to check connectivity
+ipPingList:
+  - 8.8.8.8
+#-------------------------------------------------------------------------------------------------------
+# monitoredOsProcessList: List of Ubuntu processes keywords to verify if is running at host and capture basic metrics
+#     - must contain a name or must be empty - this paramenter do not accept 'all' keywork
+monitoredOsProcessList:
+  - 
+  - 
+#-------------------------------------------------------------------------------------------------------
+# remoteOpenList: List of IP:PORT to check if is open or listening
+#     Format: <URL> or <IP>:<PORT>
+remoteOpenList:
+  - 
+#-------------------------------------------------------------------------------------------------------
+# topOsProcessCount: Number of 'top offender processes' to capture data (if captureMetrics/topProcess is set to true)
+topOsProcessCount: 3
