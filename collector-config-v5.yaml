@@ -1,5 +1,5 @@
 # Monitoring config file for metric collector v5-beta-test #############################################
-# v5.00 ################################################################################################
+# v5.02 ################################################################################################
 # EDGE Station information #############################################################################
 # Station ID used to set Station's Customer-specific configuration
 #     customerName: set using Customer / Client Name or Identification
@@ -118,8 +118,7 @@ backup:
 #-------------------------------------------------------------------------------------------------------
 # Eyeflow's camera detection component URL and port number
 # camUrl: IP and port list to access CAMERA API
-camUrl:
-  - 
+camUrl:  
 #-------------------------------------------------------------------------------------------------------
 # List of Docker container keywords (or all) to verify if is running at host and capture active time
 #     dockerList: Must be 'all' or container name list
@@ -135,14 +134,11 @@ ipPingList:
 #-------------------------------------------------------------------------------------------------------
 # monitoredOsProcessList: List of Ubuntu processes keywords to verify if is running at host and capture basic metrics
 #     - must contain a name or must be empty - this paramenter do not accept 'all' keywork
-monitoredOsProcessList:
-  - 
-  - 
+monitoredOsProcessList:  
 #-------------------------------------------------------------------------------------------------------
 # remoteOpenList: List of IP:PORT to check if is open or listening
 #     Format: <URL> or <IP>:<PORT>
-remoteOpenList:
-  - 
+remoteOpenList:  
 #-------------------------------------------------------------------------------------------------------
 # topOsProcessCount: Number of 'top offender processes' to capture data (if captureMetrics/topProcess is set to true)
 topOsProcessCount: 3
