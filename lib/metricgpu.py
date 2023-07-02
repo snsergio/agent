@@ -12,6 +12,32 @@ c.versionDict["metricgpu"] = versao
 class gpu_exec:
     # Execute Nvidia GPU metric collector
     def collect_gpu(getGpu):
+        gpuMetrics = {"gpuExecError":0,
+            "card": "",
+            "driver": "",
+            "cuda": "",
+            "gpuName": "",
+            "multiGpu": "",
+            "performanceState": "",
+            "virtMode": "",
+            "memTotal": 0,
+            "gpuUtil": 0,
+            "memUtil": 0,
+            "powerDraw": 0,
+            "temperature": 0,
+            "gpuBrand": "",
+            "gpuArch": "",
+            "gpuDisplayMode": "",
+            "gpuDisplayActive": "",
+            "fanSpeed": 0,
+            "memReserved": 0,
+            "memUsed": 0,
+            "memFree": 0,
+            "tempMax": 0,
+            "tempSlowDn": 0,
+            "tempTarget": 0,
+            "powerLimit": 0,
+            "powerMax": 0}
         gpuout, gpuExecError = "", 0
         if getGpu:
             if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metricgpu version: {versao}")
@@ -21,7 +47,7 @@ class gpu_exec:
                 if not c.logFirstRun: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-gpu_exec.collect_gpu: SMI execution error")
                 gpuExecError = 1
         if gpuout != "": gpuMetrics = gpu_exec.gpu_metrics(gpuout, gpuExecError, c.logFirstRun)
-        else: gpuMetrics = 0
+        gpuMetrics["gpuExecError"] = gpuExecError
         return gpuMetrics
         #----------------------------------------------------------------------------------------------------------------------
     def gpu_metrics(gpuData, gpuExecError, logFirstRun):
