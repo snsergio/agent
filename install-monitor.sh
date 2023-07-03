@@ -32,21 +32,24 @@ echo "##### running installation script.." | sudo tee -a $LOGFILE
 apt update | sudo tee -a $LOGFILE
 apt -y upgrade | sudo tee -a $LOGFILE
 echo "##### Installing initial packages" | sudo tee -a $LOGFILE
-apt install -y curl lm-sensors sysstat netcat iproute2 python3-requests python3-pip
+apt install -y curl lm-sensors sysstat netcat iproute2 python3-requests python3-pip unzip
 echo "##### Installing GIT:" | sudo tee -a $LOGFILE
 apt install -y git acl
 echo "##### Install PIP packages" | sudo tee -a $LOGFILE
 /usr/bin/python3 -m pip install xmltodict==0.13.0 \
     prometheus_client==0.16.0 \
-    requests \
-    PyYAML
-if [ $(uname -i) == "aarch64" ]; then
-    python3 -m pip install -U jetson-stats
-    cd /usr/local/cuda/samples/1_Utilities/deviceQuery
-    make
-    cd ~
-fi
+    requests==2.28.2 \
+    PyYAML==6.0
+echo "##### Creating required folders" | sudo tee -a $LOGFILE
 mkdir -p /opt/eyeflow/monitor/lib
+if [ -e /opt/eyeflow/monitor/promtail/promtail* ] is present; then
+    rm -R /opt/eyeflow/monitor/promtail
+fi
+mkdir -p /opt/eyeflow/monitor/promtail/positions
+if [-e /opt/eyeflow/monitor/collector-config*] is present; then
+    echo "##### saving existing collectot-config as .bak" | sudo tee -a $LOGFILE
+    mv /opt/eyeflow/monitor/collector-config* /opt/eyeflow/monitor/collector-config*.bak
+fi
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
 rm -rf /opt/eyeflow/install/agent
@@ -56,20 +59,28 @@ setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
+echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
+cd /opt/eyeflow/monitor/promtail
+curl -O -L "https://github.com/grafana/loki/releases/download/v2.4.1/promtail-linux-amd64.zip"
+unzip "promtail-linux-amd64.zip"
+sudo chmod a+x "promtail-linux-amd64"
+sudo rm -R promtail-linux-amd64.zip
+echo "##### Cloning Promtail Files" | sudo tee -a $LOGFILE
+wget https://raw.githubusercontent.com/snsergio/agent/main/promtail/promtail-config.yml
+wget https://raw.githubusercontent.com/snsergio/agent/main/promtail/promtail.service
+echo "##### Copying promtail service to systemd" | sudo tee -a $LOGFILE
+cp /opt/eyeflow/monitor/promtail/promtail.service /etc/systemd/system/. 
+systemctl enable promtail.service 
+echo "##### Preparing Promtail user and rights" | sudo tee -a $LOGFILE
+useradd --system promtail
+usermod -a -G adm promtail
+usermod -a -G systemd-journal promtail
+setfacl -R -m u:promtail:rwx /opt/eyeflow/monitor/promtail/
+echo "##### back to monitor configuration file" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor
-echo "##### Editing monitoring agent configuration file" | sudo tee -a $LOGFILE
-echo "#################################################################################"
-echo "# Edit Monitoring Agent configuration file to reflect Edge Station requirements #"
-echo "#   Press <ENTER> to edit or <CTRL-C> to cancel Monitoring Agent instalation    #"
-echo "#################################################################################"
-read -s -n 1
-nano /opt/eyeflow/monitor/collector-config-v4.yaml
 echo "##### Copying metric collector service to systemd" | sudo tee -a $LOGFILE
 cp /opt/eyeflow/monitor/metric-collector.service /etc/systemd/system/. 
-echo "##### Starting collector agent" | sudo tee -a $LOGFILE
 systemctl enable metric-collector.service 
-systemctl start metric-collector.service 
-systemctl status metric-collector.service | sudo tee -a $LOGFILE
 echo "##### Remove temporary files" | sudo tee -a $LOGFILE
 rm -f /home/eyeflow/install-monitor.sh
 rm -f /opt/eyeflow/install/install-monitor.sh
@@ -83,3 +94,25 @@ if [ ! -f /opt/eyeflow/install/edge-install.log ]; then
     echo "# LOG file at: /opt/eyeflow/install/monitor-install<date time>.log #"
     echo "####################################################################"
 fi
+echo "#################################################################################"
+echo "# Edit Monitoring Agent configuration file to reflect Edge Station requirements #"
+echo "#################################################################################"
+echo "#     nano collector-config-v5.yaml                                             #"
+echo "#     Then run:                                                                 #"
+echo "#         systemctl start metric-collector.service  # To start metric collector #"
+echo "#         systemctl status metric-collector.service # To check collector status #"
+echo "#################################################################################"
+echo " "
+echo "#################################################################################"
+echo "# Edit Promtail configuration file to reflect Edge Station requirements         #"
+echo "#################################################################################"
+echo "#     cd /opt/eyeflow/monitor/promtail                                          #"
+echo "#     nano promtail-config.yml                                                  #"
+echo "#     Then run:                                                                 #"
+echo "#         systemctl start promtail.service  # To start metric collector         #"
+echo "#         systemctl status promtail.service # To check collector status         #"
+echo "#################################################################################"
+echo " "
+echo "#################################################################################"
+echo "# After editing files, please REBOOT the system                                 #"
+echo "#################################################################################"
