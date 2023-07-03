@@ -39,7 +39,7 @@ echo "##### Install PIP packages" | sudo tee -a $LOGFILE
 /usr/bin/python3 -m pip install xmltodict==0.13.0 \
     prometheus_client==0.16.0 \
     requests==2.28.2 \
-    PyYAML==6.0
+    PyYAML
 echo "##### Creating required folders" | sudo tee -a $LOGFILE
 mkdir -p /opt/eyeflow/monitor/lib
 if [ -e /opt/eyeflow/monitor/promtail/promtail* ] is present; then
