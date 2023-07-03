@@ -40,6 +40,16 @@ echo "##### Install PIP packages" | sudo tee -a $LOGFILE
     prometheus_client==0.16.0 \
     requests==2.28.2 \
     PyYAML
+if [ $(uname -i) == "aarch64" ]; then
+    echo "##### Installing ARM jetson-stats" | sudo tee -a $LOGFILE
+    python3 -m pip install -U jetson-stats
+    echo "##### Checking deviceQuery" | sudo tee -a $LOGFILE
+    if [ ! -f /usr/local/cuda/samples/1_Utilities/deviceQuery/deviceQuery ]; then
+        cd /usr/local/cuda/samples/1_Utilities/deviceQuery
+        make
+        cd ~
+    fi
+fi
 echo "##### Creating required folders" | sudo tee -a $LOGFILE
 mkdir -p /opt/eyeflow/monitor/lib
 if [ -e /opt/eyeflow/monitor/promtail/promtail* ] is present; then
