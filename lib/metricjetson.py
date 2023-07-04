@@ -28,6 +28,20 @@ class jetson_exec:
         return jetsonMetrics
         #----------------------------------------------------------------------------------------------------------------------
     def collect_jtop(resposta):
+        resposta = {"cpuTotalCount": 0,
+                    "jtopExecError": 0,
+                    "gpuUse": 0,
+                    "fanPercent": 0,
+                    "powerTotal": 0,
+                    "powerThermal": 0,
+                    "ramUsed": 0,
+                    "tempCPU": 0,
+                    "tempGPU": 0,
+                    "tempBoard": 0,
+                    "tempWifi": 0,
+                    "nvpModel": "",
+                    "time": 0,
+                    "uptime": 0}
         try:
             with jtop() as jetson:
                 if jetson.ok():
