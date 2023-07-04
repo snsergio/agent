@@ -104,6 +104,9 @@ def get_metrics(configDict):
                     configDict["getJetson"])
                 resposta["gpuMetrics"] = 0
             collLatency["gpuMetrics"] = time.time() - inicio
+        else:
+            configDict["getGpuNvidia"] = 0
+            configDict["getJetson"] = 0
         if configDict["getIpPing"]:
             inicio = time.time()
             from lib import metricping as ip
