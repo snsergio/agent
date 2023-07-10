@@ -357,7 +357,7 @@ elif [ -f /opt/eyeflow/install/edge-option-2 ]; then
         usermod -aG docker eyeflow
         systemctl restart docker
         echo "#####     Verifying Docker access to NVIDIA GPU     #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
-        docker run -it --gpus all nvidia/cuda:11.4.0-base-ubuntu20.04 nvidia-smi | sudo tee -a /opt/eyeflow/install/edge-install.log
+        docker run -it --gpus all nvidia/cuda:11.4.3-base-ubuntu20.04 nvidia-smi | sudo tee -a /opt/eyeflow/install/edge-install.log
         echo "##### Preparing Eyeflow user groups and directories #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
         usermod -aG users eyeflow
         usermod -aG sudo eyeflow
