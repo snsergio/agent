@@ -1,6 +1,10 @@
 #!/bin/bash
 # LOG file at /opt/eyeflow/install/monitor-install-<date time>.log
 set -eo pipefail
+if [ "$EUID" -ne 0 ]
+    then echo "Please run as root"
+    exit
+fi
 mkdir -p /opt/eyeflow/install
 LOGFILE="/opt/eyeflow/install/grafana-install.log"
 touch /opt/eyeflow/install/grafana-install.log
