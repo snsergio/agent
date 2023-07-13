@@ -1,0 +1,185 @@
+groups: 
+- name: Eyeflow_Station
+  rules:
+  # Disk - Overview Only (Main Dashboard)
+  - alert: Disk Usage Warning
+    expr: count((disk_utilization > 95) > 0) by (customer, station, host, volume)
+    for: 5m
+    labels:
+      severity: call support
+    annotations:
+      summary: "Disk Volume {{ $labels.volume }} utilization over 95%"
+      description: "{{ $labels.volume }} on customer {{ $labels.customer }}, station {{ $labels.station }}, host {{ $labels.host }} has reached used capacity over 95% for more than 5 minutes."
+  # GPU Nvidia x86 - Overview Only (Main Dashboard)
+  - alert: High GPU Temperature
+    expr: count((gpu_temperature) > 90) by (customer, station, host)
+    for: 5m
+    labels:
+      severity: call support
+    annotations:
+      summary: "GPU temperature on Host {{ $labels.host }} is over 90°C"
+      description: "Host {{ $labels.host }} on customer {{ $labels.customer }}, station {{ $labels.station }} has GPU temperature above limit for more than 5 minutes"
+  # Sensors - Overview Only (Main Dashboard)
+  - alert: High CPU Temperature
+    expr: count((station_cpu_temp > 90) > 0) by (customer, station, host, maxval)
+    for: 2m
+    labels:
+      severity: cool down station
+    annotations:
+      summary: "CPU temperature near top limit on Host {{ $labels.host }}"
+      description: "Host {{ $labels.host }} on customer {{ $labels.customer }}, station {{ $labels.station }} has CPU temperature near limit {{ $labels.maxval }} deg. C for more than 2 minutes"
+  # Push - Global Information (Main Dashboard)
+  - alert: Missing Station's Metric Collector Heartbeat
+    expr: count((time() - station_heartbeat) > 120) by (customer, station, host)
+    for: 3m
+    labels:
+      severity: restart collector
+    annotations:
+      summary: "Metric Collector Heartbeat failing on Host {{ $labels.host }}"
+      description: "Host {{ $labels.host }} on customer {{ $labels.customer }}, station {{ $labels.station }} has failed to send heartbeat signal for more than 5 minutes"
+  # Server - Overview Only (Main Dashboard)
+  - alert: High Memory Utilization
+    expr: count((1 - ((station_mem_free + station_mem_cached) / station_mem_total)) > 0.9) by (customer, station, host)
+    for: 2m
+    labels:
+      severity: call support
+    annotations:
+      summary: "Memory utilization on Host {{ $labels.host }} is over 90%"
+      description: "Host {{ $labels.host }} on customer {{ $labels.customer }}, station {{ $labels.station }} has high memory utilization for more than 2 minutes"
+  # Server - Overview Only (Main Dashboard)
+  - alert: High CPU Utilization
+    expr: count((100 - station_use_idle) > 95) by (customer, station, host)
+    for: 5m
+    labels:
+      severity: call support
+    annotations:
+      summary: "CPU utilization on Host {{ $labels.host }} is over 95%"
+      description: "Host {{ $labels.host }} on customer {{ $labels.customer }}, station {{ $labels.station }} has high CPU utilization for more than 5 minutes"
+  # API GET Response - Global Information (Main Dashboard)
+  - alert: API URL not responding
+    expr: count(api_get_status != 200) by (customer, station, host, url)
+    for: 5m
+    labels:
+      severity: restart API
+    annotations:
+      summary: "API URL {{ $labels.url }} Status not OK"
+      description: "URL {{ $labels.url }} on customer {{ $labels.customer }}, station {{ $labels.station }}, host {{ $labels.host }} not OK for more than 5 minutes"
+  # Backup files - Global Information (Main Dashboard)
+  - alert: Backup Expired
+    expr: count((time() - backup_expire) > 0) by (customer, station, host, name)
+    for: 5m
+    labels:
+      severity: Execute Backup Procedure
+    annotations:
+      summary: "Backup file {{ $labels.name }} expired"
+      description: "Backup File {{ $labels.name }} on customer {{ $labels.customer }}, station {{ $labels.station }}, host {{ $labels.host }} expired for more than 5 minutes"
+  # Camera API - Global Information (Main Dashboard)
+  - alert: Missing Camera Heartbeat
+    expr: count(abs((time() - camera_heartbeat) - 30) > 60) by (customer, station, host, camera)
+    for: 4m
+    labels:
+      severity: check cameras
+    annotations:
+      summary: "Camera {{ $labels.camera }} not sending heartbeat signal"
+      description: "Camera {{$labels.camera}} on customer {{ $labels.customer }}, station {{ $labels.station }}, host {{ $labels.host }} not sending heartbeat signal for more than 5 minutes"
+  # Camera API - Global Information (Main Dashboard)
+  - alert: Camera Status Error
+    expr: count(camera_status == 0) by (customer, station, host, camera)
+    for: 4m
+    labels:
+      severity: check cameras
+    annotations:
+      summary: "Camera {{ $labels.camera }} has Status Error"
+      description: "Camera {{$labels.camera}} on customer {{ $labels.customer }}, station {{ $labels.station }}, host {{ $labels.host }} has Error Status for more than 5 minutes"
+  # Docker Status - Global Information (Main Dashboard)
+  - alert: Docker Container Issue
+    expr: count(docker_status_info_info < 1) by (customer, station, host, names)
+    for: 5m
+    labels:
+      severity: Check Docker Containers
+    annotations:
+      summary: "Docker Container {{ $labels.names }} not in UP state on Host {{ $labels.host }}"
+      description: "Docker Container {{$labels.names}} has an issue on customer {{ $labels.customer }}, station {{ $labels.station }}, host {{ $labels.host }} for more than 5 minutes"
+  # Metric Collector Execution Error - Global Information (Main Dashboard)
+  - alert: Metric Execution Error
+    expr: count({__name__=~"error_exec.+"} > 0) by (customer, station, host, mod)
+    for: 5m
+    labels:
+      severity: Check Collector Configuration
+    annotations:
+      summary: "Module {{ $labels.mod }} has execution error on Host {{ $labels.host }}"
+      description: "Module {{ $labels.mod }} has execution error on customer {{ $labels.customer }}, station {{ $labels.station }}, host {{ $labels.host }} for more than 5 minutes"
+  # Ping Loss - Overview Only (Main Dashboard)
+  - alert: Network Connectivity Error
+    expr: count((ping_loss_pct > 50) > 0) by (customer, station, host, ipaddr)
+    for: 2m
+    labels:
+      severity: verify NIC Connectivity
+    annotations:
+      summary: "Host {{ $labels.host }} has IP Connectivity Error reported"
+      description: "Customer {{ $labels.customer }}, Station {{ $labels.station }}, Host {{ $labels.host }} cannot reach IP ({{ $labels.ipaddr }}) for more than 2 minutes"
+  # Monitored OS Process - Global Information (Main Dashboard)
+  - alert: Missing Monitored OS Process
+    expr: count((process_missing > 0) > 0) by (customer, station, host, process)
+    for: 2m
+    labels:
+      severity: Check Process
+    annotations:
+      summary: "Process {{ $labels.process }} Missing"
+      description: "Process {{ $labels.process }} at Customer {{ $labels.customer }}, Station {{ $labels.station }}, Host {{ $labels.host }} missing for more than 2 minutes"
+  # Remote Open Port
+  - alert: Remote Open Port
+    expr: count(remote_open_status >= 400) or count(remote_open_status < 100) by (customer, station, host, remoteurl)
+    for: 2m
+    labels:
+      severity: Check Remote Connectivity
+    annotations:
+      summary: "Remote URL not ready"
+      description: "Remote URL {{ $labels.remoteurl }} at Customer {{ $labels.customer }}, Station {{ $labels.station }}, Host {{ $labels.host }} not ready for more than 2 minutes"
+  # Self IP - Overview Only (Main Dashboard)
+  - alert: Station IP mismatch
+    expr: count((selfip_present == 0) > 0) by (customer, station, host, ipaddr)
+    for: 2m
+    labels:
+      severity: Check Station's NIC configuration
+    annotations:
+      summary: "Host {{ $labels.host }} has Self IP Address Mismatch"
+      description: "Customer {{ $labels.customer }}, Station {{ $labels.station }}, Host {{ $labels.host }} - IP Address not match configured IP ({{ $labels.ipaddr }}) for more than 2 minutes"
+  # Sys Agent
+  - alert: Error Message on Sys Agent Status
+    expr: count((sysagent_error > 0) > 0) by (customer, station, host)
+    for: 3m
+    labels:
+      severity: Restart SYS AGENT
+    annotations:
+      summary: "Host {{ $labels.host }} has Error in SysAgent Status"
+      description: "Customer {{ $labels.customer }}, Station {{ $labels.station }}, Host {{ $labels.host }} - Sys Agent Status has reported Error Message for more than 3 minutes"
+- name: External_Services
+  rules:
+  # Consolidation
+  - alert: Missing External Service Heartbeat
+    expr: count((time() - service_heartbeat) > 60) by (host, exported_job, service)
+    for: 5m
+    labels:
+      severity: verify external services
+    annotations:
+      summary: "Service {{ $labels.service }} on Host {{ $labels.host }} not sending heartbeat signal"
+      description: "{{ $labels.exported_job }} on Host {{ $labels.host }} has failed to send heartbeat signal for Service {{ $labels.service }} for more than 5 minutes"
+  # Consolidation
+  - alert: External Service has reported errors
+    expr: count(service_status > 0) by (host, exported_job, service)
+    for: 2m
+    labels:
+      severity: verify external services
+    annotations:
+      summary: "Service {{ $labels.service }} on Host {{ $labels.host }} reporting errors"
+      description: "{{ $labels.exported_job }} on Host {{ $labels.host }} has reported {{ $labels.service }} errors for more than 2 minutes"
+  # MES Communication Errors
+  # - alert: MES Services Communication Errors
+  #   expr: count(error_status > 0)
+  #   for: 2m
+  #   labels:
+  #     severity: validate MES data and communication
+  #   annotations:
+  #     summary: "Host {{ $labels.host }} has reported MES Communication Errors"
+  #     description: "Station {{ $labels.customer }}, Host {{ $labels.host }} has reported MES Communication errors"
