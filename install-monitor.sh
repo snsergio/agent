@@ -1,131 +1,68 @@
 #!/bin/bash
 # LOG file at /opt/eyeflow/install/monitor-install-<date time>.log
 set -eo pipefail
-mkdir -p /opt/eyeflow/install
-if [ -f /opt/eyeflow/install/edge-install.log ]; then
-    LOGFILE="/opt/eyeflow/install/edge-install.log"
-else
-    LOGFILE="/opt/eyeflow/install/monitor-install.log"
-    touch /opt/eyeflow/install/monitor-install.log
+if [ "$EUID" -ne 0 ]
+    then echo "Please run as root"
+    exit
 fi
-echo "##### Installing Eyeflow Monitoring agent on EDGE server #####" | sudo tee -a $LOGFILE
+mkdir -p /opt/eyeflow/install
+LOGFILE="/opt/eyeflow/install/grafana-install.log"
+touch /opt/eyeflow/install/grafana-install.log
+echo "##### Installing Eyeflow Dashboard Stack on EDGE server #####" | sudo tee -a $LOGFILE
 date | sudo tee -a $LOGFILE
 if [ "$EUID" -ne 0 ]
     then echo "Please run as root" | sudo tee -a $LOGFILE
     exit
 fi
-lspci | grep -i nvidia &> /dev/null
-if [ ! $? == 0 ]
-    then echo "No NVIDIA GPU found, ensure correct collector configuration" | sudo tee -a $LOGFILE
-fi
-lspci | grep -i nvidia | sudo tee -a $LOGFILE
-if [ ! $(lsb_release -si) == "Ubuntu" ]
-    then echo "OS distribution is not Ubuntu, exiting..." | sudo tee -a $LOGFILE
-    exit
-fi
 lsb_release -si | sudo tee -a $LOGFILE
 lsb_release -sr | sudo tee -a $LOGFILE
 if [[ ! $PWD = /opt/eyeflow/install ]]; then
-    cp ./install-monitor.sh /opt/eyeflow/install/install-monitor.sh
+    cp ./install-grafana-stack.sh /opt/eyeflow/install/install-grafana-stack.sh
 fi
 echo "##### running installation script.." | sudo tee -a $LOGFILE
-apt update | sudo tee -a $LOGFILE
-apt -y upgrade | sudo tee -a $LOGFILE
-echo "##### Installing initial packages" | sudo tee -a $LOGFILE
-apt install -y curl lm-sensors sysstat netcat iproute2 python3-requests python3-pip unzip
+if [ -x "$(command -v docker)" ]; then
+    echo "##### Docker present #####" | sudo tee -a $LOGFILE
+else
+    echo "##### Install docker required libraries #####" | sudo tee -a $LOGFILE
+    apt install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common \
+        gnupg
+    echo "#####      Install docker keyring       #####" | sudo tee -a $LOGFILE
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+    echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    echo "#####         Install docker            #####" | sudo tee -a $LOGFILE
+    apt-get update
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+fi
+usermod -aG docker eyeflow
 echo "##### Installing GIT:" | sudo tee -a $LOGFILE
 apt install -y git acl
-echo "##### Install PIP packages" | sudo tee -a $LOGFILE
-/usr/bin/python3 -m pip install xmltodict==0.13.0 \
-    prometheus_client==0.16.0 \
-    requests==2.28.2 \
-    PyYAML
-if [ $(uname -i) == "aarch64" ]; then
-    echo "##### Installing ARM jetson-stats" | sudo tee -a $LOGFILE
-    python3 -m pip install -U jetson-stats
-    echo "##### Checking deviceQuery" | sudo tee -a $LOGFILE
-    if [ ! -f /usr/local/cuda/samples/1_Utilities/deviceQuery/deviceQuery ]; then
-        cd /usr/local/cuda/samples/1_Utilities/deviceQuery
-        make
-        cd ~
-    fi
-fi
 echo "##### Creating required folders" | sudo tee -a $LOGFILE
-mkdir -p /opt/eyeflow/monitor/lib
-if [ -e /opt/eyeflow/monitor/promtail/promtail* ] is present; then
-    rm -R /opt/eyeflow/monitor/promtail
-fi
-mkdir -p /opt/eyeflow/monitor/promtail/positions
-if [-e /opt/eyeflow/monitor/collector-config*] is present; then
-    echo "##### saving existing collectot-config as .bak" | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/monitor/collector-config* /opt/eyeflow/monitor/collector-config*.bak
-fi
+mkdir -p /opt/eyeflow/monitor/stack
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
 rm -rf /opt/eyeflow/install/agent
-git clone https://github.com/snsergio/agent.git
+git clone https://github.com/snsergio/agent/tree/main/stack
 chown -R eyeflow:users /opt/eyeflow/monitor
 setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
-rm -rf /opt/eyeflow/install/agent/install*
-rm -rf /opt/eyeflow/install/agent/README*
-rm -rf /opt/eyeflow/install/agent/stack
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
-echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
-cd /opt/eyeflow/monitor/promtail
-curl -O -L "https://github.com/grafana/loki/releases/download/v2.4.1/promtail-linux-amd64.zip"
-unzip "promtail-linux-amd64.zip"
-sudo chmod a+x "promtail-linux-amd64"
-sudo rm -R promtail-linux-amd64.zip
-echo "##### Cloning Promtail Files" | sudo tee -a $LOGFILE
-wget https://raw.githubusercontent.com/snsergio/agent/main/promtail/promtail-config.yml
-wget https://raw.githubusercontent.com/snsergio/agent/main/promtail/promtail.service
-echo "##### Copying promtail service to systemd" | sudo tee -a $LOGFILE
-cp /opt/eyeflow/monitor/promtail/promtail.service /etc/systemd/system/. 
-systemctl enable promtail.service 
-echo "##### Preparing Promtail user and rights" | sudo tee -a $LOGFILE
-useradd --system promtail
-usermod -a -G adm promtail
-usermod -a -G systemd-journal promtail
-setfacl -R -m u:promtail:rwx /opt/eyeflow/monitor/promtail/
-echo "##### back to monitor configuration file" | sudo tee -a $LOGFILE
-cd /opt/eyeflow/monitor
-echo "##### Copying metric collector service to systemd" | sudo tee -a $LOGFILE
-cp /opt/eyeflow/monitor/metric-collector.service /etc/systemd/system/. 
-systemctl enable metric-collector.service 
-echo "##### Remove temporary files" | sudo tee -a $LOGFILE
-rm -f /home/eyeflow/install-monitor.sh
-rm -f /opt/eyeflow/install/install-monitor.sh
-rm -rf /opt/eyeflow/install/agent
-echo "###########################################################" | sudo tee -a $LOGFILE
-echo "#####   end of Metric Collector installation script   #####" | sudo tee -a $LOGFILE
-echo "##### Finished at: $(date)" | sudo tee -a $LOGFILE
-if [ ! -f /opt/eyeflow/install/edge-install.log ]; then
-    mv $LOGFILE /opt/eyeflow/install/monitor-install-$(date +%F-%H:%M).log
-    echo "####################################################################"
-    echo "# LOG file at: /opt/eyeflow/install/monitor-install<date time>.log #"
-    echo "####################################################################"
-fi
-echo "#################################################################################"
-echo "# Edit Monitoring Agent configuration file to reflect Edge Station requirements #"
-echo "#################################################################################"
-echo "#     nano collector-config-v5.yaml                                             #"
-echo "#     Then run:                                                                 #"
-echo "#         systemctl start metric-collector.service  # To start metric collector #"
-echo "#         systemctl status metric-collector.service # To check collector status #"
-echo "#################################################################################"
-echo " "
-echo "#################################################################################"
-echo "# Edit Promtail configuration file to reflect Edge Station requirements         #"
-echo "#################################################################################"
-echo "#     cd /opt/eyeflow/monitor/promtail                                          #"
-echo "#     nano promtail-config.yml                                                  #"
-echo "#     Then run:                                                                 #"
-echo "#         systemctl start promtail.service  # To start metric collector         #"
-echo "#         systemctl status promtail.service # To check collector status         #"
-echo "#################################################################################"
-echo " "
-echo "#################################################################################"
-echo "# After editing files, please REBOOT the system                                 #"
-echo "#################################################################################"
+cd /opt/eyeflow/monitor/stack
+docker stack deploy -c docker-stack.yml prom
+echo "########################################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
+echo "#####   end of Grafana Stack installation script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+echo "#####   To access Grafana dashboard, navigate to:  #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+echo "#####   http://localhost:3000                      #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+echo "#####   User: admin, Password: slai.slai           #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+echo "#####                                              #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
+echo "##### Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
+sleep 5
+rm -f /opt/eyeflow/install/install-grafana-stack.sh
+rm -rf /opt/eyeflow/install/stack
+rm -f /home/eyeflow/install-grafana-stack.sh
