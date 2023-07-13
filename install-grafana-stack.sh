@@ -65,7 +65,7 @@ if [ -x "$(docker info --format '{{.Swarm.ControlAvailable}}')" ]; then
     echo "##### Swarm initialized #####" | sudo tee -a $LOGFILE
 else
     echo "##### Initializing Swarm #####" | sudo tee -a $LOGFILE
-    docker swarm init
+    docker swarm init --advertise-addr 127.0.0.1
 fi
 docker stack deploy -c docker-stack.yml prom
 echo "########################################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
