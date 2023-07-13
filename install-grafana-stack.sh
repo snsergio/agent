@@ -47,11 +47,18 @@ mkdir -p /opt/eyeflow/monitor/stack
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
 rm -rf /opt/eyeflow/install/agent
-git clone https://github.com/snsergio/agent/tree/main/stack
+git clone https://github.com/snsergio/agent.git
 chown -R eyeflow:users /opt/eyeflow/monitor
 setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
+rm -R /opt/eyeflow/install/lib
+rm -R /opt/eyeflow/install/promtail
+rm -R /opt/eyeflow/install/lib
+rm -rf /opt/eyeflow/install/README*
+rm -rf /opt/eyeflow/install/collector*
+rm -rf /opt/eyeflow/install/metric*
+rm -rf /opt/eyeflow/install/install*
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
 cd /opt/eyeflow/monitor/stack
 docker stack deploy -c docker-stack.yml prom
