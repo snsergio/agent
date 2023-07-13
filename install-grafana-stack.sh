@@ -66,6 +66,7 @@ if [ -x "$(docker info --format '{{.Swarm.ControlAvailable}}')" ]; then
 else
     echo "##### Initializing Swarm #####" | sudo tee -a $LOGFILE
     docker swarm init
+fi
 docker stack deploy -c docker-stack.yml prom
 echo "########################################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
 echo "#####   end of Grafana Stack installation script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
