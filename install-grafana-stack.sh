@@ -52,9 +52,9 @@ chown -R eyeflow:users /opt/eyeflow/monitor
 setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
-rm -R /opt/eyeflow/install/lib
-rm -R /opt/eyeflow/install/promtail
-rm -R /opt/eyeflow/install/lib
+rm -rf /opt/eyeflow/install/lib
+rm -rf /opt/eyeflow/install/promtail
+rm -rf /opt/eyeflow/install/lib
 rm -rf /opt/eyeflow/install/README*
 rm -rf /opt/eyeflow/install/collector*
 rm -rf /opt/eyeflow/install/metric*
