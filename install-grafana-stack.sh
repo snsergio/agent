@@ -61,6 +61,11 @@ rm -rf /opt/eyeflow/install/agent/metric*
 rm -rf /opt/eyeflow/install/agent/install*
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
 cd /opt/eyeflow/monitor/stack
+if [ -x "$(docker info --format '{{.Swarm.ControlAvailable}}')" ]; then
+    echo "##### Swarm initialized #####" | sudo tee -a $LOGFILE
+else
+    echo "##### Initializing Swarm #####" | sudo tee -a $LOGFILE
+    docker swarm init
 docker stack deploy -c docker-stack.yml prom
 echo "########################################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
 echo "#####   end of Grafana Stack installation script   #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
