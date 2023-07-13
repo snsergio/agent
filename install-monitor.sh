@@ -68,6 +68,9 @@ chown -R eyeflow:users /opt/eyeflow/monitor
 setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
+rm -rf /opt/eyeflow/install/agent/install*
+rm -rf /opt/eyeflow/install/agent/README*
+rm -rf /opt/eyeflow/install/agent/stack
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
 echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor/promtail
