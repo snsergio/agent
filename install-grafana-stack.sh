@@ -52,13 +52,13 @@ chown -R eyeflow:users /opt/eyeflow/monitor
 setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
-rm -rf /opt/eyeflow/install/lib
-rm -rf /opt/eyeflow/install/promtail
-rm -rf /opt/eyeflow/install/lib
-rm -rf /opt/eyeflow/install/README*
-rm -rf /opt/eyeflow/install/collector*
-rm -rf /opt/eyeflow/install/metric*
-rm -rf /opt/eyeflow/install/install*
+rm -rf /opt/eyeflow/install/agent/lib
+rm -rf /opt/eyeflow/install/agent/promtail
+rm -rf /opt/eyeflow/install/agent/lib
+rm -rf /opt/eyeflow/install/agent/README*
+rm -rf /opt/eyeflow/install/agent/collector*
+rm -rf /opt/eyeflow/install/agent/metric*
+rm -rf /opt/eyeflow/install/agent/install*
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
 cd /opt/eyeflow/monitor/stack
 docker stack deploy -c docker-stack.yml prom
