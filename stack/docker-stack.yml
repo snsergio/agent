@@ -26,7 +26,7 @@ services:
         constraints:
           - node.role==manager
       restart_policy:
-        condition: always
+        condition: on-failure
   alertmanager:
     image: prom/alertmanager:v0.25.0
     ports:
@@ -43,7 +43,7 @@ services:
         constraints:
            - node.role==manager
       restart_policy:
-        condition: always
+        condition: on-failure
   grafana:
     image: grafana/grafana:10.0.2
     depends_on:
@@ -63,13 +63,13 @@ services:
         constraints:
           - node.role==manager
       restart_policy:
-        condition: always
+        condition: on-failure
   pushgateway:
     image: prom/pushgateway:v1.6.0
     deploy:
       mode: global
       restart_policy:
-        condition: always
+        condition: on-failure
     ports:
       - 9091:9091
     networks:
@@ -79,7 +79,7 @@ services:
     deploy:
       mode: global
       restart_policy:
-        condition: always
+        condition: on-failure
     ports:
       - 2000:2000
     env_file:
