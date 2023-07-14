@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.03-PUB-3fc13f6-20230712140305"
+versao = "metricconfig-v5.04-PUB-3fc13f6-20230712140305"
 #######################################################################################################################
 import logging
 import time
@@ -112,9 +112,9 @@ class metric_attributes:
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl2_TLS not set")
         if metric_attributes.resposta["tls1"]:
             try: metric_attributes.resposta["user1"] = configDict["tls"]["pushUrl_TLS_Username"]
-            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl_TLS_Username not set")
+            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl_TLS_Username not set, Setting TLS1 to FALSE")
             try: metric_attributes.resposta["pass1"] = base64.b64decode(configDict["tls"]["pushUrl_TLS_Password"]).decode("utf-8")
-            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl_TLS_Password not set")
+            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl_TLS_Password not set, Setting TLS1 to FALSE")
             if metric_attributes.resposta["user1"] == None or metric_attributes.resposta["user1"] == "":
                 logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl_TLS_Username not set, disabling TLS")
                 metric_attributes.resposta["tls1"], metric_attributes.resposta["user1"] = 0, ""
@@ -123,9 +123,9 @@ class metric_attributes:
                 metric_attributes.resposta["tls1"], metric_attributes.resposta["pass1"] = 0, ""
         if metric_attributes.resposta["tls2"]:
             try: metric_attributes.resposta["user2"] = configDict["tls"]["pushUrl2_TLS_Username"]
-            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl2_TLS_Username not set")
+            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl2_TLS_Username not set, Setting TLS1 to FALSE")
             try: metric_attributes.resposta["pass2"] = base64.b64decode(configDict["tls"]["pushUrl2_TLS_Password"]).decode("utf-8")
-            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl2_TLS_Password not set")
+            except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl2_TLS_Password not set, Setting TLS1 to FALSE")
             if metric_attributes.resposta["user2"] == None or metric_attributes.resposta["user2"] == "":
                 logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_tls: tls/pushUrl2_TLS_Username not set, disabling TLS")
                 metric_attributes.resposta["tls2"], metric_attributes.resposta["user2"] = 0, ""
@@ -162,7 +162,7 @@ class metric_attributes:
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_restart: restart/sysAgentRestart not set")
         try: os.environ["SAMON"] = configDict["restart"]["suAccess"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_restart: restart/suAccess not set")
-        if (metric_attributes.resposta["camRestart"] or metric_attributes.resposta["sysAgentRestart"]) and (configDict["restart"]["suAccess"] in [None, ""]):
+        if (metric_attributes.resposta["camRestart"] == True) or (metric_attributes.resposta["sysAgentRestart"] == True) and (configDict["restart"]["suAccess"] in [None, ""]):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Setup: required restart/suAccess not set. Forcing restart to FALSE")
             metric_attributes.resposta["camRestart"] = False
             metric_attributes.resposta["sysAgentRestart"] = False
@@ -182,6 +182,13 @@ class metric_attributes:
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: update/updateUrl not set")
         try: metric_attributes.resposta["updateAccessToken"] = configDict["update"]["updateAccessToken"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_update: update/updateAccessToken not set")
+        if (len(metric_attributes.resposta["updateUrl"]) < 8) or (len(metric_attributes.resposta["updateAccessToken"]) < 8):
+            if (metric_attributes.resposta["autoUpdate"] == True):
+                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: updateUrl or AccessToken not set, disabling Auto Update")
+                metric_attributes.resposta["autoUpdate"] == False
+            if (metric_attributes.resposta["autoRestart"] == True):
+                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: updateUrl or AccessToken not set, disabling Auto Restart")
+                metric_attributes.resposta["autoRestart"] == False
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Get capture_metrics information from configuration file
@@ -256,20 +263,45 @@ class metric_attributes:
         # Additional Information
         try: metric_attributes.resposta["apiUrl"] = configDict["apiUrl"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/apiUrl not set")
+        if (metric_attributes.resposta["getApiGet"] > 0) and (len(metric_attributes.resposta["apiUrl"]) < 8):
+            logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/apiGet True but no URL. Disabling Get API")
+            metric_attributes.resposta["getApiGet"] = 0
         try: metric_attributes.resposta["camUrl"] = configDict["camUrl"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/camUrl not set")
+        if (metric_attributes.resposta["getCam"] > 0) and (len(metric_attributes.resposta["camUrl"]) < 8):
+            logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getCam True but no URL. Disabling Get CAM")
+            metric_attributes.resposta["getCam"] = 0
         try: metric_attributes.resposta["dockerList"] = configDict["dockerList"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: dockerList not set")
+        if (metric_attributes.resposta["getDocker"] > 0):
+            if (len(metric_attributes.resposta["dockerList"]) == 0) or (None in metric_attributes.resposta["dockerList"]):
+                    logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getDocker True but no LIST. Disabling Get Docker")
+                    metric_attributes.resposta["getDocker"] = 0
         try: metric_attributes.resposta["dockerExceptList"] = configDict["dockerExceptList"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: dockerExceptList not set")
         try: metric_attributes.resposta["ipPingList"] = configDict["ipPingList"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: ipPingList not set")
+        if (metric_attributes.resposta["getIpPing"] > 0):
+            if (len(metric_attributes.resposta["ipPingList"]) == 0) or (None in metric_attributes.resposta["ipPingList"]):
+                logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getIpPing True but no LIST. Disabling Get IpPing")
+                metric_attributes.resposta["getIpPing"] = 0
         try: metric_attributes.resposta["monitoredOsProcList"] = configDict["monitoredOsProcessList"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: monitoredOsProcessList not set")
+        if (metric_attributes.resposta["getMonOsProc"] > 0):
+            if (len(metric_attributes.resposta["monitoredOsProcList"]) == 0) or (None in metric_attributes.resposta["monitoredOsProcList"]):
+                logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getMonOsProc True but no LIST. Disabling Get MonOsProc")
+                metric_attributes.resposta["getMonOsProc"] = 0
         try: metric_attributes.resposta["remoteOpenList"] = configDict["remoteOpenList"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: remoteOpenList not set")
+        if (metric_attributes.resposta["getRemoteOpen"] > 0):
+            if (len(metric_attributes.resposta["remoteOpenList"]) == 0) or (None in metric_attributes.resposta["remoteOpenList"]):
+                logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getRemoteOpen True but no LIST. Disabling Get RemoteOpen")
+                metric_attributes.resposta["getRemoteOpen"] = 0
         try: metric_attributes.resposta["topOsProcessCount"] = int(configDict["topOsProcessCount"])
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: topOsProcessCount not set")
+        if (metric_attributes.resposta["getTopProcess"] > 0) and (metric_attributes.resposta["topOsProcessCount"] < 1):
+            logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getTopProcess True but no Count. Disabling Get TopProcess")
+            metric_attributes.resposta["getTopProcess"] = 0
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Get backup information from configuration file
