@@ -4,7 +4,6 @@ route:
   group_interval: 1m
   repeat_interval: 30m
   group_wait: 10s
-  continue: true
 
 receivers:
   - name: 'ms-teams'
