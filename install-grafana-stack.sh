@@ -88,7 +88,9 @@ echo "#####   http://localhost:3000                      #####" | sudo tee -a /o
 echo "#####   User: admin, Password: slai.slai           #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
 echo "#####                                              #####" | sudo tee -a /opt/eyeflow/install/edge-install.log
 echo "##### Finished at: $(date)" | sudo tee -a /opt/eyeflow/install/edge-install.log
+echo "##### REBBOOTING for changes to take effect        #####"
 sleep 5
 rm -f /opt/eyeflow/install/install-grafana-stack.sh
 rm -rf /opt/eyeflow/install/stack
 rm -f /home/eyeflow/install-grafana-stack.sh
+reboot
