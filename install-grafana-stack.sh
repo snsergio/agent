@@ -34,6 +34,7 @@ else
         fi
         curl -fsSL https://get.docker.com -o get-docker.sh
         bash get-docker.sh
+        docker network create --subnet 172.18.0.0/16 --gateway 172.18.0.1 -o com.docker.network.bridge.enable_icc=false -o com.docker.network.bridge.name=docker_gwbridge docker_gwbridge
     else
         echo "##### Install docker required libraries #####" | sudo tee -a $LOGFILE
         apt install -y \
