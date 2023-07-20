@@ -25,6 +25,13 @@ if [ -x "$(command -v docker)" ]; then
     echo "##### Docker present #####" | sudo tee -a $LOGFILE
 else
     if [ $(uname -i) == "aarch64" ]; then
+        if [ -f /sys/firmware/devicetree/base/model ]; then
+            isRaspi=$(cat /sys/firmware/devicetree/base/model | grep -c "Raspberry")
+            if [ $isRaspi != 0 ]; then
+                apt install linux-modules-extra-raspi -y
+                echo "##### Raspberry Pi - Installing dependencies" | sudo tee -a $LOGFILE
+            fi
+        fi
         curl -fsSL https://get.docker.com -o get-docker.sh
         bash get-docker.sh
     else
