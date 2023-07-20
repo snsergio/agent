@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.04-PUB-3fc13f6-20230712140305"
+versao = "metricconfig-v5.05-PUB-3fc13f6-20230712140305"
 #######################################################################################################################
 import logging
 import time
@@ -182,13 +182,15 @@ class metric_attributes:
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: update/updateUrl not set")
         try: metric_attributes.resposta["updateAccessToken"] = configDict["update"]["updateAccessToken"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_update: update/updateAccessToken not set")
-        if (len(metric_attributes.resposta["updateUrl"]) < 8) or (len(metric_attributes.resposta["updateAccessToken"]) < 8):
-            if (metric_attributes.resposta["autoUpdate"] == True):
-                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: updateUrl or AccessToken not set, disabling Auto Update")
-                metric_attributes.resposta["autoUpdate"] == False
-            if (metric_attributes.resposta["autoRestart"] == True):
-                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: updateUrl or AccessToken not set, disabling Auto Restart")
-                metric_attributes.resposta["autoRestart"] == False
+        if metric_attributes.resposta["autoUpdate"] or metric_attributes.resposta["autoRestart"]:
+            if metric_attributes.resposta["updateUrl"] in [None, ""]:
+                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: updateUrl not set, disabling Auto Update")
+                metric_attributes.resposta["autoUpdate"] = False
+                metric_attributes.resposta["autoRestart"] = False
+            elif metric_attributes.resposta["updateAccessToken"] in [None, ""]:
+                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: AccessToken not set, disabling Auto Update")
+                metric_attributes.resposta["autoUpdate"] = False
+                metric_attributes.resposta["autoRestart"] = False
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Get capture_metrics information from configuration file
