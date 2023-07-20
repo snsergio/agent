@@ -77,8 +77,9 @@ cd /opt/eyeflow/monitor/stack
 if [ -x "$(docker info --format '{{.Swarm.ControlAvailable}}')" ]; then
     echo "##### Swarm initialized #####" | sudo tee -a $LOGFILE
 else
+    selfIp=$(hostname  -I | cut -f1 -d' ')
     echo "##### Initializing Swarm #####" | sudo tee -a $LOGFILE
-    docker swarm init --advertise-addr 127.0.0.1
+    docker swarm init --advertise-addr $selfIp --listen-addr $selfIp:2377
 fi
 docker stack deploy -c docker-stack.yml prom
 echo "########################################################" | sudo tee -a /opt/eyeflow/install/edge-install.log
