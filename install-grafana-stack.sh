@@ -23,21 +23,26 @@ echo "##### running installation script.." | sudo tee -a $LOGFILE
 if [ -x "$(command -v docker)" ]; then
     echo "##### Docker present #####" | sudo tee -a $LOGFILE
 else
-    echo "##### Install docker required libraries #####" | sudo tee -a $LOGFILE
-    apt install -y \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        software-properties-common \
-        gnupg
-    echo "#####      Install docker keyring       #####" | sudo tee -a $LOGFILE
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    chmod a+r /etc/apt/keyrings/docker.gpg
-    echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    echo "#####         Install docker            #####" | sudo tee -a $LOGFILE
-    apt-get update
-    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    if [ $(uname -i) == "aarch64" ]; then
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        bash get-docker.sh
+    else
+        echo "##### Install docker required libraries #####" | sudo tee -a $LOGFILE
+        apt install -y \
+            apt-transport-https \
+            ca-certificates \
+            curl \
+            software-properties-common \
+            gnupg
+        echo "#####      Install docker keyring       #####" | sudo tee -a $LOGFILE
+        install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        chmod a+r /etc/apt/keyrings/docker.gpg
+        echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        echo "#####         Install docker            #####" | sudo tee -a $LOGFILE
+        apt-get update
+        apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    fi
 fi
 usermod -aG docker eyeflow
 echo "##### Installing GIT:" | sudo tee -a $LOGFILE
