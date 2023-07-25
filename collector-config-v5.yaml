@@ -1,5 +1,5 @@
-# Monitoring config file for metric collector v5-PUB-3fc13f6-20230712140305 #############################################
-# v5.02 ################################################################################################
+# Monitoring config file for metric collector v5-PUB-3fc13f6-20230712140305 ############################
+# v5.03 ################################################################################################
 # EDGE Station information #############################################################################
 # Station ID used to set Station's Customer-specific configuration
 #     customerName: set using Customer / Client Name or Identification
@@ -9,8 +9,7 @@
 stationID:
   customerName: 
   stationName: 
-  StationIP:
-    - 
+  StationIP:  
 #-------------------------------------------------------------------------------------------------------
 # Metric RTDB URL and TLS ##############################################################################
 # Environment variables for metric collector operation
@@ -21,7 +20,7 @@ stationID:
 #     pushUrl(2)_TLS_Username: TLS auth username
 #     pushUrl(2)_TLS_Password: TLS auth password (base64-encoded)
 prometheusPush:
-  pushUrl: pushgateway.eyeflow.ai
+  pushUrl: 
   pushUrl2: 
 tls:
   pushUrl_TLS: false
@@ -39,12 +38,18 @@ agentPath:
   logPath: /opt/eyeflow/monitor
   scriptPath: /opt/eyeflow/monitor
 #-------------------------------------------------------------------------------------------------------
-# metricDetails: Metrics to capture, check capture metrics settings: light: simplified set; full: full set (high storage usage)
-# debugMode: Debug metric collector execution or not-If true, more log data sent to log file (lots of disk space)
-# restart: Service information if metric collector should restart or not specified services (use with care)
-#     camRestart: Auto restart for camera API
-#     sysAgentRestart: Auto restart for Sys Agent service
-#     suAccess: Auto restart token
+# metricDetails: Metrics to capture, check capture metrics settings:
+#     Overrides TRUE in TRUE/FALSE options on metrics to capture
+#         light: simplified set; 
+#         full: full set (high storage usage)
+# debugMode: Debug metric collector execution or not
+#     True - set for debug purposes only - lots of disk space used
+#     False - Normal operation
+# restart: If metric collector should restart or not specific services (use with care)
+#     ++ under development ++
+#         camRestart: Auto restart for camera API
+#         sysAgentRestart: Auto restart for Sys Agent service
+#         suAccess: Auto restart token
 metricDetails: full
 debugMode: false
 restart:
@@ -53,10 +58,11 @@ restart:
   suAccess: 
 #-------------------------------------------------------------------------------------------------------
 # Metric collector update actions ######################################################################
-#     autoUpdate: Metric collector will check API for newer component versions and download them
-#     autoRestart: If enabled, metric collector will restart after update components
-#     updateUrl: Update API URL
-#     updateAccesstoken: Update API Access information
+#     ++ under development ++
+#         autoUpdate: Metric collector will check API for newer component versions and download them
+#         autoRestart: If enabled, metric collector will restart after update components
+#         updateUrl: Update API URL
+#         updateAccesstoken: Update API Access information
 update:
   autoUpdate: false
   autoRestart: false
@@ -64,24 +70,28 @@ update:
   updateAccesstoken: 
 #-------------------------------------------------------------------------------------------------------
 # Station metrics to capture ###########################################################################
-# Metrics to capture (0, false: don't capture; 1, true, ligh: capture simplified set; 2, full: capture full set)
-# CaptureMetrics takes precedence over metricDetails, except for true/false values when metricDetails ovewrites
-#     captureInterval:    Time interval to run metrics collector on host - tipically between 10s and 30s
-#     apiGet:             Capture REST GET response from URL:PORT endpoint listed in apiUrl list, example: Line Sensors
+# Metrics to capture - valid options are:
+#     - 0 or false: don't capture; 
+#     - 1 or true or ligh: capture simplified metrics set;
+#     - 2 or full: capture full metrics set;
+#     Keywords true and false will be overrided by metricDetail attribute
+# Metrics agents to configure. Can be individually set to 0, 1 or 2 - metricDetails ovewrites true/false
+#     captureInterval:    Time interval to run collector on host - tipically between 10s and 30s
+#     apiGet:             Capture REST API response to GET command. Set URL:PORT endpoint in apiUrl list
 #     backup:             Check backup success based on specific backup informarion details 
-#     cameraApi:          Camera status from API on camUrl endpoint
-#     disk:               Capture disk metrics
-#     docker:             Capture docker containers - must configure dockerList and docker ExceptList
+#     cameraApi:          Camera status from API on camUrl URL
+#     disk:               Capture host's disk metrics
+#     docker:             Capture docker containers information - configure dockerList and docker ExceptList
 #     gpu:                Capture GPU metrics (Nvidia metrics only, either on x86 or ARM/Jetson Architecture)
-#     ipPing:             Veirfy ping response on specified IP ping list (environment/pingList)
-#     monitoredOsProcess: Capture Ubuntu process activity on processes that need to be present - list on monitordOsProcess
-#     network:            Capture network metrics
-#     remoteOpenStatus:   Check if IP:PORT on remote device is listening or open - listed in remoteOpenList 
-#     selfIP:             Verify if any of host's UP NICs IPv4 addresses match specified Station ID IP list (StationIP)
-#     sensor:             Capture sensor metrics (must have Ubuntu's sensor-lm package installed)
+#     ipPing:             Veirfy ping response on specified IP ping list (see environment/pingList)
+#     monitoredOsProcess: Capture Ubuntu processes activity that need to be present - list on monitordOsProcess
+#     network:            Capture host's network metrics
+#     remoteOpenStatus:   Check if IP:PORT on remote device is listening or open - list on remoteOpenList 
+#     selfIP:             Verify if any of host's UP NICs IPv4 addresses match specified Station IP (StationIP)
+#     sensor:             Capture host's sensor metrics (must have Ubuntu's sensor-lm package installed)
 #     server:             Capture host's hardware metrics
 #     sysAgent:           Verify if Eyeflow's sysagent service is running
-#     topOsProcess:       Capture Ubuntu top active processes and their activity (<n> is set on topProcessCount)
+#     topOsProcess:       Capture Ubuntu top <n> processes information (<n> is set on topProcessCount)
 captureMetrics:                            
   captureInterval: 10s
   apiGet: true
@@ -101,15 +111,16 @@ captureMetrics:
   topOsProcess: true
 #-------------------------------------------------------------------------------------------------------
 # Metrics additional information ###########
-# apiUrl: List IP and port to test GET response, for example: Sensor in production line. Check GET response (==2xx or !=2xx)
-apiUrl:                                    
-  -             
+# apiUrl: List the URL or IP:port to test REST GET response
+#     Example: Sensor in production line. Check GET response (==2xx or !=2xx)
+apiUrl:              
 #-------------------------------------------------------------------------------------------------------
 # backup: Backup routine details
-#     folder:     Folder where data is stored (complete path)
-#     filePrefix: Backup file common prefix - both prefix and suffix filters are applied
-#     fileSuffix: Backup file common suffix - both prefix and suffix filters are applied
-#     frequency: Backup frequency - monthly (m), daily (d), hourly (h) - ex: 7d (weekly); 12h (twice a day)
+#     folder:     Folder where backup data is stored (full path)
+#     filePrefix: Backup files common prefix - both prefix and suffix filters are applied
+#     fileSuffix: Backup files common suffix - both prefix and suffix filters are applied
+#     frequency:  Backup expected frequency to verify - will trigger an alarm if above this value
+#         - monthly (m), daily (d), hourly (h) - ex: 7d (weekly); 12h (twice a day)
 backup:
   folder: 
   filePrefix:
@@ -121,8 +132,9 @@ backup:
 camUrl:  
 #-------------------------------------------------------------------------------------------------------
 # List of Docker container keywords (or all) to verify if is running at host and capture active time
-#     dockerList: Must be 'all' or container name list
-#     dockerExceptList: List of Docker container keywords to exclude (do not capture active time) - Must be none or container name list
+#     dockerList: Must be 'all' or container names list
+#     dockerExceptList: List of Docker container keywords to exclude (do not capture active time)
+#         - Must be none or container name list
 dockerList:
   - all
 dockerExceptList:
@@ -132,13 +144,14 @@ dockerExceptList:
 ipPingList:
   - 8.8.8.8
 #-------------------------------------------------------------------------------------------------------
-# monitoredOsProcessList: List of Ubuntu processes keywords to verify if is running at host and capture basic metrics
-#     - must contain a name or must be empty - this paramenter do not accept 'all' keywork
+# monitoredOsProcessList: List of Ubuntu host process keywords to check if is running and get metrics
+#     - if enabled must contain a name - this paramenter do not accept 'all' keywork
 monitoredOsProcessList:  
 #-------------------------------------------------------------------------------------------------------
 # remoteOpenList: List of IP:PORT to check if is open or listening
-#     Format: <URL> or <IP>:<PORT>
+#     - Format: <URL> or <IP>:<PORT>
 remoteOpenList:  
 #-------------------------------------------------------------------------------------------------------
-# topOsProcessCount: Number of 'top offender processes' to capture data (if captureMetrics/topProcess is set to true)
+# topOsProcessCount: Number of 'top offender processes' to capture data
+#     - Valid if captureMetrics/topProcess is set to true
 topOsProcessCount: 3
