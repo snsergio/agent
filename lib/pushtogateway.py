@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "pushtogateway-v5.03-PUB-3fc13f6-20230712140305"
+versao = "pushtogateway-v5.04-PUB-3fc13f6-20230724173000"
 #######################################################################################################################
 import logging
 import time
@@ -35,14 +35,14 @@ class push_data:
             self.bkpExpire = Gauge("backup_expire", "Backup file age based on frequency", ["customer", "station", "host", "path", "name", "join"], registry=self.registry)
         # Metric Cam
         if configDict["getCam"] == 2:
-            self.camSeq = Gauge("camera_sequence", "Camera frame sequence number", ["customer", "station", "host", "camera"], registry=self.registry)
-            self.camHeight = Gauge("camera_height", "Camera frame height", ["customer", "station", "host", "camera"], registry=self.registry)
-            self.camWidth = Gauge("camera_width", "Camera frame width", ["customer", "station", "host", "camera"], registry=self.registry)
+            self.camSeq = Gauge("camera_sequence", "Camera frame sequence number", ["customer", "station", "host", "camera", "url", "endpoint"], registry=self.registry)
+            self.camHeight = Gauge("camera_height", "Camera frame height", ["customer", "station", "host", "camera", "url", "endpoint"], registry=self.registry)
+            self.camWidth = Gauge("camera_width", "Camera frame width", ["customer", "station", "host", "camera", "url", "endpoint"], registry=self.registry)
         if configDict["getCam"] >= 1:
             self.camExecError = Gauge("error_exec_camera", "Camera API - Command Execution Error", ["customer", "station", "host", "mod"], registry=self.registry)
-            self.camRestartError = Gauge("error_exec_restart_camera", "Camera API - Restart Camera Execution Error", ["customer", "station", "host", "mod", "camera"], registry=self.registry)
-            self.camStatus = Gauge("camera_status", "Camera status - 0 (off) / 1 (on)", ["customer", "station", "host", "camera"], registry=self.registry)
-            self.camHeartbeat = Gauge("camera_heartbeat", "Camera time - heartbeat", ["customer", "station", "host", "camera"], registry=self.registry)
+            self.camRestartError = Gauge("error_exec_restart_camera", "Camera API - Restart Camera Execution Error", ["customer", "station", "host", "mod", "camera", "url", "endpoint"], registry=self.registry)
+            self.camStatus = Gauge("camera_status", "Camera status - 0 (off) / 1 (on)", ["customer", "station", "host", "camera", "url", "endpoint"], registry=self.registry)
+            self.camHeartbeat = Gauge("camera_heartbeat", "Camera time - heartbeat", ["customer", "station", "host", "camera", "url", "endpoint"], registry=self.registry)
         # Metric Disk
         if configDict["getDisk"] == 2:
             self.diskSize = Gauge("disk_size", "Disk Size Bytes", ["customer", "station", "host", "volume"], registry=self.registry)
@@ -400,15 +400,16 @@ class push_data:
         if self.configDict["getCam"] >= 1:
             self.camExecError.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], mod="camera").set(self.metricDict["camMetrics"]["camExecError"])
             if self.configDict["camRestart"]:
-                try: self.camRestartError.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], mod="camrestart", camera=self.metricDict["camMetrics"][element]["camName"]).set(self.metricDict["camMetrics"]["camRestartError"])
-                except: self.camRestartError.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], mod="camrestart", camera=self.metricDict["camMetrics"][element]["camName"]).set(-1)
+                try: self.camRestartError.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], mod="camrestart", camera=self.metricDict["camMetrics"][element]["camName"], url=self.metricDict["camMetrics"][element]["camUrl"], endpoint=self.metricDict["camMetrics"][element]["endPoint"]).set(self.metricDict["camMetrics"]["camRestartError"])
+                except: self.camRestartError.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], mod="camrestart", camera=self.metricDict["camMetrics"][element]["camName"], url=self.metricDict["camMetrics"][element]["camUrl"], endpoint=self.metricDict["camMetrics"][element]["endPoint"]).set(-1)
             for element in range(len(self.metricDict["camMetrics"]) - 1):
-                if self.configDict["getCam"] == 2:
-                    self.camSeq.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element]["camName"]).set(self.metricDict["camMetrics"][element]["frameSeq"])
-                    self.camHeight.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element]["camName"]).set(self.metricDict["camMetrics"][element]["camHeight"])
-                    self.camWidth.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element]["camName"]).set(self.metricDict["camMetrics"][element]["camWidth"])
-                self.camStatus.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element]["camName"]).set(self.metricDict["camMetrics"][element]["status"])
-                self.camHeartbeat.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element]["camName"]).set(self.metricDict["camMetrics"][element]["camHB"])
+                for subitem in range(len(self.metricDict["camMetrics"][element])):
+                    if self.configDict["getCam"] == 2:
+                        self.camSeq.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element][subitem]["camName"], url=self.metricDict["camMetrics"][element][subitem]["camUrl"], endpoint=self.metricDict["camMetrics"][element][subitem]["endPoint"]).set(self.metricDict["camMetrics"][element][subitem]["frameSeq"])
+                        self.camHeight.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element][subitem]["camName"], url=self.metricDict["camMetrics"][element][subitem]["camUrl"], endpoint=self.metricDict["camMetrics"][element][subitem]["endPoint"]).set(self.metricDict["camMetrics"][element][subitem]["camHeight"])
+                        self.camWidth.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element][subitem]["camName"], url=self.metricDict["camMetrics"][element][subitem]["camUrl"], endpoint=self.metricDict["camMetrics"][element][subitem]["endPoint"]).set(self.metricDict["camMetrics"][element][subitem]["camWidth"])
+                    self.camStatus.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element][subitem]["camName"], url=self.metricDict["camMetrics"][element][subitem]["camUrl"], endpoint=self.metricDict["camMetrics"][element][subitem]["endPoint"]).set(self.metricDict["camMetrics"][element][subitem]["status"])
+                    self.camHeartbeat.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], camera=self.metricDict["camMetrics"][element][subitem]["camName"], url=self.metricDict["camMetrics"][element][subitem]["camUrl"], endpoint=self.metricDict["camMetrics"][element][subitem]["endPoint"]).set(self.metricDict["camMetrics"][element][subitem]["camHB"])
         # Metric Disk
         if self.configDict["getDisk"] >= 1:
             if self.metricDict["diskMetrics"]["diskDfExecError"] or self.metricDict["diskMetrics"]["diskExecError"]: self.diskExecError.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"], mod="disk").set(1)
