@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.05-PUB-3fc13f6-20230712140305"
+versao = "metricconfig-v5.06-PUB-3fc13f6-20230724173000"
 #######################################################################################################################
 import logging
 import time
@@ -85,6 +85,13 @@ class metric_attributes:
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationIP not set")
         if metric_attributes.resposta["stationIpList"] == None or len(metric_attributes.resposta["stationIpList"]) < 1: 
             metric_attributes.resposta["stationIpList"] = []
+        else:
+            tmpList = []
+            for sIp in range(len(metric_attributes.resposta["stationIpList"])):
+                if not metric_attributes.validate_ip(metric_attributes.resposta["stationIpList"][sIp]):
+                    logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationIP not valid: {sIp}")
+                else: tmpList.append(metric_attributes.resposta["stationIpList"][sIp])
+            metric_attributes.resposta["stationIpList"] = tmpList
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Get RTDB information from configuration file
@@ -270,7 +277,7 @@ class metric_attributes:
             metric_attributes.resposta["getApiGet"] = 0
         try: metric_attributes.resposta["camUrl"] = configDict["camUrl"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/camUrl not set")
-        if (metric_attributes.resposta["getCam"] > 0) and (len(metric_attributes.resposta["camUrl"]) < 8):
+        if (metric_attributes.resposta["getCam"] > 0) and (metric_attributes.resposta["camUrl"] in [None, ""]):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getCam True but no URL. Disabling Get CAM")
             metric_attributes.resposta["getCam"] = 0
         try: metric_attributes.resposta["dockerList"] = configDict["dockerList"]
@@ -290,7 +297,11 @@ class metric_attributes:
         try: metric_attributes.resposta["monitoredOsProcList"] = configDict["monitoredOsProcessList"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: monitoredOsProcessList not set")
         if (metric_attributes.resposta["getMonOsProc"] > 0):
-            if (len(metric_attributes.resposta["monitoredOsProcList"]) == 0) or (None in metric_attributes.resposta["monitoredOsProcList"]):
+            if metric_attributes.resposta["monitoredOsProcList"] not in [None, ""]:
+                if (len(metric_attributes.resposta["monitoredOsProcList"]) == 0) or (None in metric_attributes.resposta["monitoredOsProcList"]):
+                    logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getMonOsProc True but no LIST. Disabling Get MonOsProc")
+                    metric_attributes.resposta["getMonOsProc"] = 0
+            else:
                 logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getMonOsProc True but no LIST. Disabling Get MonOsProc")
                 metric_attributes.resposta["getMonOsProc"] = 0
         try: metric_attributes.resposta["remoteOpenList"] = configDict["remoteOpenList"]
@@ -306,6 +317,20 @@ class metric_attributes:
             metric_attributes.resposta["getTopProcess"] = 0
         return
         #----------------------------------------------------------------------------------------------------------------------
+    # Validate IP Address
+    def validate_ip(ipAddress):
+        a = ipAddress.split('.')
+        if len(a) != 4:
+            return False
+        for x in a:
+            if not x.isdigit():
+                return False
+            i = int(x)
+            if i < 0 or i > 255:
+                return False
+        return True        
+        #----------------------------------------------------------------------------------------------------------------------
+
     # Get backup information from configuration file
     def get_backup(configDict):
         metric_attributes.resposta["backupFolder"] = "./"
