@@ -135,9 +135,15 @@ if ls /opt/eyeflow/monitor/collector-config-v5.yaml.source 1> /dev/null 2>&1; th
 fi
 systemctl enable metric-collector.service 
 echo "##### Remove temporary files" | sudo tee -a $LOGFILE
-if [ -f /home/eyeflow/install-monitor.sh ] && rm -f /home/eyeflow/install-monitor.sh
-if [ -f /home/eyeflow/install-edge.sh ] && rm -f /home/eyeflow/install-edge.sh
-if [ -f /opt/eyeflow/monitor/install/install-monitor.sh ] && rm -f /opt/eyeflow/monitor/install/install-monitor.sh
+if [ -f /home/eyeflow/install-monitor.sh ]; then
+    rm -f /home/eyeflow/install-monitor.sh
+fi
+if [ -f /home/eyeflow/install-edge.sh ]; then
+    rm -f /home/eyeflow/install-edge.sh
+fi
+if [ -f /opt/eyeflow/monitor/install/install-monitor.sh ]
+    rm -f /opt/eyeflow/monitor/install/install-monitor.sh
+fi
 files=(/home/eyeflow/README*)
 if [ -e "${files[0]}" ]; then
     rm -R /home/eyeflow/README*
