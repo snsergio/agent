@@ -134,7 +134,7 @@ fi
 systemctl enable metric-collector.service 
 echo "##### Remove temporary files" | sudo tee -a $LOGFILE
 rm -f /home/eyeflow/install-monitor.sh
-rm -R /home/eyeflow/install-edge.sh
+rm -f /home/eyeflow/install-edge.sh
 rm -R /home/eyeflow/README*
 rm -f /opt/eyeflow/monitor/install/install-monitor.sh
 rm -R /opt/eyeflow/monitor/README*
