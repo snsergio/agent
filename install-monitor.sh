@@ -40,7 +40,6 @@ clear
 echo "##### running installation script.." | sudo tee -a $LOGFILE
 while true; do
     read -p "Do you want to UPDATE and UPGRADE OS? (y/n) " yn
-
     case $yn in 
         [yY] ) echo "##### updating and upgrading OS..." | sudo tee -a $LOGFILE;
             apt update | sudo tee -a $LOGFILE
@@ -50,7 +49,6 @@ while true; do
             break;;
         * ) echo invalid response;;
     esac
-
 done
 echo "##### resuming installation script.." | sudo tee -a $LOGFILE
 echo "##### Installing initial packages" | sudo tee -a $LOGFILE
@@ -72,9 +70,13 @@ if [ -e /opt/eyeflow/monitor/promtail/promtail* ] is present; then
     rm -R /opt/eyeflow/monitor/promtail
 fi
 mkdir -p /opt/eyeflow/monitor/promtail/positions
-if ls /opt/eyeflow/monitor/collector-config* 1> /dev/null 2>&1; then
-    echo "##### saving existing collector-config as bak-collector-config" | sudo tee -a $LOGFILE
-    ls -1 /opt/eyeflow/monitor/collector-config* | xargs -L1 -I{} mv {} /opt/eyeflow/install/bak-{}
+if ls /opt/eyeflow/monitor/collector-config-v4.yaml 1> /dev/null 2>&1; then
+    echo "##### saving existing collector-config-v4 as collector-config-v4.bak" | sudo tee -a $LOGFILE
+    mv /opt/eyeflow/monitor/collector-config-v4.yaml /opt/eyeflow/install/collector-config-v4.bak
+fi
+if ls /opt/eyeflow/monitor/collector-config-v5.yaml 1> /dev/null 2>&1; then
+    echo "##### saving existing collector-config-v5 as collector-config-v5.bak" | sudo tee -a $LOGFILE
+    mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/install/collector-config-v5.bak
 fi
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
@@ -88,15 +90,16 @@ rm -rf /opt/eyeflow/install/agent/install*
 rm -rf /opt/eyeflow/install/agent/README*
 rm -rf /opt/eyeflow/install/agent/stack
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
-if ls /opt/eyeflow/install/bak-collector-config* 1> /dev/null 2>&1; then
-    ls -1 /opt/eyeflow/install/bak-collector-config* | xargs -L1 -I{} mv {} /opt/eyeflow/monitor/bak-{}
+if ls /opt/eyeflow/install/collector-config-v4.bak 1> /dev/null 2>&1; then
+    echo "##### returning existing collector-config-v4 to monitor as collector-config-v4.bak" | sudo tee -a $LOGFILE
+    mv /opt/eyeflow/install/collector-config-v4.bak /opt/eyeflow/monitor/collector-config-v4.bak
 fi
-if ls /opt/eyeflow/monitor/bak-collector-config-v5.yaml 1> /dev/null 2>&1; then
+if ls /opt/eyeflow/install/collector-config-v5.bak 1> /dev/null 2>&1; then
     echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
     echo "##### move new collectot-config-v5 to .source" | sudo tee -a $LOGFILE
     echo "##### restoring previous collectot-config-v5 " | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.yaml.source
-    mv /opt/eyeflow/monitor/bak-collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.yaml
+    mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.source
+    mv /opt/eyeflow/install/collector-config-v5.bak /opt/eyeflow/monitor/collector-config-v5.yaml
 fi
 echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor/promtail
