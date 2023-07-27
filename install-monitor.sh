@@ -1,6 +1,6 @@
 #!/bin/bash
 # LOG file at /opt/eyeflow/install/monitor-install-<date time>.log
-# wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
+# wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
 # chmod +x install-monitor.sh
 # sudo ./install-monitor.sh
 ##### Install Monitor v5.10
