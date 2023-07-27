@@ -99,6 +99,13 @@ echo "##### back to monitor configuration file" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor
 echo "##### Copying metric collector service to systemd" | sudo tee -a $LOGFILE
 cp /opt/eyeflow/monitor/metric-collector.service /etc/systemd/system/. 
+if [-e /opt/eyeflow/monitor/collector-config-v5.yaml.source] is present; then
+    echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
+    echo "##### reloading systemctl daemon" | sudo tee -a $LOGFILE
+    echo "##### restarting metric-collector" | sudo tee -a $LOGFILE
+    systemctl daemon-reload
+    systemctl restart metric-collector.service
+fi
 systemctl enable metric-collector.service 
 echo "##### Remove temporary files" | sudo tee -a $LOGFILE
 rm -f /home/eyeflow/install-monitor.sh
