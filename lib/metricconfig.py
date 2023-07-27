@@ -32,23 +32,6 @@ class config_setup:
         metric_attributes.resposta["ntpTimeDiscrepancy"] = 0
         metric_attributes.resposta["ntpPollingPeriod"] = 0
         metric_attributes.resposta["ntpStatus"] = 0
-        # Check NTP
-        cmd = ["grep", "^server", "/etc/ntp.conf"]
-        ntp = c.exec_cmd(cmd, 0)
-        if ntp["returnCode"] == 0:
-            ntp = ntp["output"].splitlines()
-            for svr in ntp:
-                srv = svr.split()
-                if "." in srv[1]:  metric_attributes.resposta["ntpServerList"].append(srv[1])
-                metric_attributes.resposta["ntpStatus"] = 1
-        cmd = ["ntpstat"]
-        ntp = c.exec_cmd(cmd, 0)
-        if ntp["returnCode"] == 0:
-            ntp = ntp["output"].splitlines()
-            for svr in ntp:
-                if "(" in svr: metric_attributes.resposta["ntpIp"] = svr.split("(", 1)[1].split(")")[0]
-                if "correct" in svr: metric_attributes.resposta["ntpTimeDiscrepancy"] = config_setup.calc_time(svr)
-                if "polling" in svr: metric_attributes.resposta["ntpPollingPeriod"] = config_setup.calc_time(svr)
         configExecError = 0
         if configPath == None: 
             logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-config_setup.get_config: Env var CONFIGPATH not set, changing to CWD")
@@ -91,15 +74,6 @@ class config_setup:
         metric_attributes.resposta["configExecError"] = configExecError
         del os, yaml, Path
         return metric_attributes.validate(config_setup.configDict)
-        #----------------------------------------------------------------------------------------------------------------------
-    def calc_time(ntp):
-        getTime = ntp.split()
-        if getTime[-2].isdigit():
-            resposta = float(getTime[-2])
-            if getTime[-1] == "s": resposta *=1
-            elif getTime[-1] == "ms": resposta /= 1000.0
-        else: resposta = 1000
-        return resposta
         #----------------------------------------------------------------------------------------------------------------------
 class metric_attributes:
     resposta = {}
