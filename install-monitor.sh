@@ -1,5 +1,8 @@
 #!/bin/bash
 # LOG file at /opt/eyeflow/install/monitor-install-<date time>.log
+# wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
+# chmod +x install-monitor.sh
+# sudo ./install-monitor.sh
 ##### Install Monitor v5.10
 set -eo pipefail
 if [ "$EUID" -ne 0 ]
@@ -91,7 +94,12 @@ echo "##### Copying promtail service to systemd" | sudo tee -a $LOGFILE
 cp /opt/eyeflow/monitor/promtail/promtail.service /etc/systemd/system/. 
 systemctl enable promtail.service 
 echo "##### Preparing Promtail user and rights" | sudo tee -a $LOGFILE
-useradd --system promtail
+
+if id "promtail" >/dev/null 2>&1; then
+    echo "##### User Promtail already present" | sudo tee -a $LOGFILE
+else
+    useradd --system promtail
+fi
 usermod -a -G adm promtail
 usermod -a -G systemd-journal promtail
 setfacl -R -m u:promtail:rwx /opt/eyeflow/monitor/promtail/
