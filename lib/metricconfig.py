@@ -28,7 +28,7 @@ class config_setup:
         metric_attributes.resposta["cpuModelName"] = "invalid"
         metric_attributes.resposta["hostName"] = "myhost"
         metric_attributes.resposta["ntpServerList"] = []
-        metric_attributes.resposta["ntpIp"] = ""
+        metric_attributes.resposta["ntpIp"] = "none"
         metric_attributes.resposta["ntpTimeDiscrepancy"] = 0
         metric_attributes.resposta["ntpPollingPeriod"] = 0
         metric_attributes.resposta["ntpStatus"] = 0
