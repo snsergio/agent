@@ -1,5 +1,6 @@
 #!/bin/bash
 # LOG file at /opt/eyeflow/install/monitor-install-<date time>.log
+##### Install Monitor v5.10
 set -eo pipefail
 if [ "$EUID" -ne 0 ]
     then echo "Please run as root"
@@ -36,7 +37,7 @@ echo "##### running installation script.." | sudo tee -a $LOGFILE
 apt update | sudo tee -a $LOGFILE
 apt -y upgrade | sudo tee -a $LOGFILE
 echo "##### Installing initial packages" | sudo tee -a $LOGFILE
-apt install -y curl lm-sensors sysstat netcat iproute2 python3-requests python3-pip unzip
+apt install -y curl lm-sensors sysstat ntpstat netcat iproute2 python3-requests python3-pip unzip
 echo "##### Installing GIT:" | sudo tee -a $LOGFILE
 apt install -y git acl
 echo "##### Install PIP packages" | sudo tee -a $LOGFILE
@@ -47,12 +48,6 @@ echo "##### Install PIP packages" | sudo tee -a $LOGFILE
 if [ $(uname -i) == "aarch64" ]; then
     echo "##### Installing ARM jetson-stats" | sudo tee -a $LOGFILE
     python3 -m pip install -U jetson-stats
-    echo "##### Checking deviceQuery" | sudo tee -a $LOGFILE
-    if [ ! -f /usr/local/cuda/samples/1_Utilities/deviceQuery/deviceQuery ]; then
-        cd /usr/local/cuda/samples/1_Utilities/deviceQuery
-        make
-        cd ~
-    fi
 fi
 echo "##### Creating required folders" | sudo tee -a $LOGFILE
 mkdir -p /opt/eyeflow/monitor/lib
@@ -76,6 +71,13 @@ rm -rf /opt/eyeflow/install/agent/install*
 rm -rf /opt/eyeflow/install/agent/README*
 rm -rf /opt/eyeflow/install/agent/stack
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
+if [-e /opt/eyeflow/monitor/collector-config-v5.yaml.bak] is present; then
+    echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
+    echo "##### move new collectot-config-v5 to .source" | sudo tee -a $LOGFILE
+    echo "##### restoring previous collectot-config-v5 " | sudo tee -a $LOGFILE
+    mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.yaml.source
+    mv /opt/eyeflow/monitor/collector-config-v5.bak /opt/eyeflow/monitor/collector-config-v5.yaml
+fi
 echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor/promtail
 curl -O -L "https://github.com/grafana/loki/releases/download/v2.4.1/promtail-linux-amd64.zip"
