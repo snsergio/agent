@@ -52,7 +52,6 @@ while true; do
     esac
 
 done
-
 echo "##### resuming installation script.." | sudo tee -a $LOGFILE
 echo "##### Installing initial packages" | sudo tee -a $LOGFILE
 apt install -y curl lm-sensors sysstat ntpstat netcat iproute2 python3-requests python3-pip unzip
@@ -75,7 +74,7 @@ fi
 mkdir -p /opt/eyeflow/monitor/promtail/positions
 if ls /opt/eyeflow/monitor/collector-config* 1> /dev/null 2>&1; then
     echo "##### saving existing collectot-config as .bak" | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/monitor/collector-config* /opt/eyeflow/monitor/install/collector-config*.bak
+    mv /opt/eyeflow/monitor/collector-config* /opt/eyeflow/install/collector-config*.bak
 fi
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
@@ -89,14 +88,8 @@ rm -rf /opt/eyeflow/install/agent/install*
 rm -rf /opt/eyeflow/install/agent/README*
 rm -rf /opt/eyeflow/install/agent/stack
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
-if ls /opt/eyeflow/monitor/install/collector-config*.bak 1> /dev/null 2>&1; then
-    mv /opt/eyeflow/monitor/install/collector-config*.bak /opt/eyeflow/monitor/
-fi
-if [ -f /opt/eyeflow/install/edge-install.log ]; then
-    LOGFILE="/opt/eyeflow/install/edge-install.log"
-else
-    LOGFILE="/opt/eyeflow/install/monitor-install.log"
-    touch /opt/eyeflow/install/monitor-install.log
+if ls /opt/eyeflow/install/collector-config*.bak 1> /dev/null 2>&1; then
+    mv /opt/eyeflow/install/collector-config*.bak /opt/eyeflow/monitor/
 fi
 if ls /opt/eyeflow/monitor/collector-config-v5.yaml.bak 1> /dev/null 2>&1; then
     echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
