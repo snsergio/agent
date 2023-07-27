@@ -141,8 +141,12 @@ fi
 systemctl enable metric-collector.service 
 echo "##### Remove temporary files" | sudo tee -a $LOGFILE
 rm -f /home/eyeflow/install-monitor.sh
-rm -f /opt/eyeflow/install/install-monitor.sh
-rm -rf /opt/eyeflow/install/agent
+rm -R /home/eyeflow/install-edge.sh
+rm -R /home/eyeflow/README*
+rm -f /opt/eyeflow/monitor/install/install-monitor.sh
+rm -R /opt/eyeflow/monitor/README*
+rm -R /opt/eyeflow/monitor/install*
+rm -rf /opt/eyeflow/monitor/install/agent
 echo "###########################################################" | sudo tee -a $LOGFILE
 echo "#####   end of Metric Collector installation script   #####" | sudo tee -a $LOGFILE
 echo "##### Finished at: $(date)" | sudo tee -a $LOGFILE
