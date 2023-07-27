@@ -141,7 +141,7 @@ fi
 if [ -f /home/eyeflow/install-edge.sh ]; then
     rm -f /home/eyeflow/install-edge.sh
 fi
-if [ -f /opt/eyeflow/monitor/install/install-monitor.sh ]
+if [ -f /opt/eyeflow/monitor/install/install-monitor.sh ]; then
     rm -f /opt/eyeflow/monitor/install/install-monitor.sh
 fi
 files=(/home/eyeflow/README*)
