@@ -73,7 +73,7 @@ if [ -e /opt/eyeflow/monitor/promtail/promtail* ] is present; then
     rm -R /opt/eyeflow/monitor/promtail
 fi
 mkdir -p /opt/eyeflow/monitor/promtail/positions
-if [-e /opt/eyeflow/monitor/collector-config*] is present; then
+if ls /opt/eyeflow/monitor/collector-config* 1> /dev/null 2>&1; then
     echo "##### saving existing collectot-config as .bak" | sudo tee -a $LOGFILE
     mv /opt/eyeflow/monitor/collector-config* /opt/eyeflow/monitor/install/collector-config*.bak
 fi
@@ -89,8 +89,8 @@ rm -rf /opt/eyeflow/install/agent/install*
 rm -rf /opt/eyeflow/install/agent/README*
 rm -rf /opt/eyeflow/install/agent/stack
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
-if [-e /opt/eyeflow/monitor/install/collector-config*] is present; then
-    mv /opt/eyeflow/monitor/install/collector-config* /opt/eyeflow/monitor/collector-config*.bak
+if ls /opt/eyeflow/monitor/install/collector-config*.bak 1> /dev/null 2>&1; then
+    mv /opt/eyeflow/monitor/install/collector-config*.bak /opt/eyeflow/monitor/
 fi
 if [ -f /opt/eyeflow/install/edge-install.log ]; then
     LOGFILE="/opt/eyeflow/install/edge-install.log"
@@ -98,16 +98,12 @@ else
     LOGFILE="/opt/eyeflow/install/monitor-install.log"
     touch /opt/eyeflow/install/monitor-install.log
 fi
-
-
-
-
-if [-e /opt/eyeflow/monitor/collector-config-v5.yaml.bak] is present; then
+if ls /opt/eyeflow/monitor/collector-config-v5.yaml.bak 1> /dev/null 2>&1; then
     echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
     echo "##### move new collectot-config-v5 to .source" | sudo tee -a $LOGFILE
     echo "##### restoring previous collectot-config-v5 " | sudo tee -a $LOGFILE
     mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.yaml.source
-    mv /opt/eyeflow/monitor/collector-config-v5.bak /opt/eyeflow/monitor/collector-config-v5.yaml
+    mv /opt/eyeflow/monitor/collector-config-v5.yaml.bak /opt/eyeflow/monitor/collector-config-v5.yaml
 fi
 echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor/promtail
