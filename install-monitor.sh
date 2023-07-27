@@ -36,9 +36,24 @@ lsb_release -sr | sudo tee -a $LOGFILE
 if [[ ! $PWD = /opt/eyeflow/install ]]; then
     cp ./install-monitor.sh /opt/eyeflow/install/install-monitor.sh
 fi
+clear
 echo "##### running installation script.." | sudo tee -a $LOGFILE
-apt update | sudo tee -a $LOGFILE
-apt -y upgrade | sudo tee -a $LOGFILE
+while true; do
+    read -p "Do you want to UPDATE and UPGRADE OS? (y/n) " yn
+
+    case $yn in 
+        [yY] ) echo "##### updating and upgrading OS..." | sudo tee -a $LOGFILE;
+            apt update | sudo tee -a $LOGFILE
+            apt -y upgrade | sudo tee -a $LOGFILE
+            break;;
+        [nN] ) echo "##### continuing without update and upgrade..." | sudo tee -a $LOGFILE;
+            break;;
+        * ) echo invalid response;;
+    esac
+
+done
+
+echo "##### resuming installation script.." | sudo tee -a $LOGFILE
 echo "##### Installing initial packages" | sudo tee -a $LOGFILE
 apt install -y curl lm-sensors sysstat ntpstat netcat iproute2 python3-requests python3-pip unzip
 echo "##### Installing GIT:" | sudo tee -a $LOGFILE
