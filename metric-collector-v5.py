@@ -169,6 +169,35 @@ def get_metrics(configDict):
             f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-main.get_metrics: Latency info: {collLatency}")
         return resposta
         #----------------------------------------------------------------------------------------------------------------------
+def get_ntp(configDict):
+    # Check NTP 
+    cmd = ["grep", "^server", "/etc/ntp.conf"]
+    ntp = c.exec_cmd(cmd, 0)
+    if ntp["returnCode"] == 0:
+        ntp = ntp["output"].splitlines()
+        for svr in ntp:
+            srv = svr.split()
+            if "." in srv[1]:  configDict["ntpServerList"].append(srv[1])
+            configDict["ntpStatus"] = 1
+    cmd = ["ntpstat"]
+    ntp = c.exec_cmd(cmd, 0)
+    if ntp["returnCode"] == 0:
+        ntp = ntp["output"].splitlines()
+        for svr in ntp:
+            if "(" in svr: configDict["ntpIp"] = svr.split("(", 1)[1].split(")")[0]
+            if "correct" in svr: configDict["ntpTimeDiscrepancy"] = calc_time(svr)
+            if "polling" in svr: configDict["ntpPollingPeriod"] = calc_time(svr)
+    return
+    #----------------------------------------------------------------------------------------------------------------------
+def calc_time(ntp):
+    getTime = ntp.split()
+    if getTime[-2].isdigit():
+        resposta = float(getTime[-2])
+        if getTime[-1] == "s": resposta *=1
+        elif getTime[-1] == "ms": resposta /= 1000.0
+    else: resposta = 1000
+    return resposta
+    #----------------------------------------------------------------------------------------------------------------------
 # Main 
 if __name__ == "__main__":
     import time
@@ -181,6 +210,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename = c.logPath + c.logFileName, level=logging.DEBUG, force=True)
     del mc 
     while True:
+        get_ntp(configDict)
         metrics = get_metrics(configDict)
         basic = pg.push_data(configDict, metrics)
         basic.set_data()
