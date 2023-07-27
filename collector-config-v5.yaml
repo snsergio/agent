@@ -1,5 +1,5 @@
 # Monitoring config file for metric collector v5-PUB-3fc13f6-20230712140305 ############################
-# v5.03 ################################################################################################
+# v5.10 ################################################################################################
 # EDGE Station information #############################################################################
 # Station ID used to set Station's Customer-specific configuration
 #     customerName: set using Customer / Client Name or Identification
