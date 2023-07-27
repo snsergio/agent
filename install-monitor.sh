@@ -114,7 +114,6 @@ echo "##### Copying promtail service to systemd" | sudo tee -a $LOGFILE
 cp /opt/eyeflow/monitor/promtail/promtail.service /etc/systemd/system/. 
 systemctl enable promtail.service 
 echo "##### Preparing Promtail user and rights" | sudo tee -a $LOGFILE
-
 if id "promtail" >/dev/null 2>&1; then
     echo "##### User Promtail already present" | sudo tee -a $LOGFILE
 else
@@ -136,12 +135,21 @@ if ls /opt/eyeflow/monitor/collector-config-v5.yaml.source 1> /dev/null 2>&1; th
 fi
 systemctl enable metric-collector.service 
 echo "##### Remove temporary files" | sudo tee -a $LOGFILE
-rm -f /home/eyeflow/install-monitor.sh
-rm -f /home/eyeflow/install-edge.sh
-rm -R /home/eyeflow/README*
-rm -f /opt/eyeflow/monitor/install/install-monitor.sh
-rm -R /opt/eyeflow/monitor/README*
-rm -R /opt/eyeflow/monitor/install*
+if [ -f /home/eyeflow/install-monitor.sh ] && rm -f /home/eyeflow/install-monitor.sh
+if [ -f /home/eyeflow/install-edge.sh ] && rm -f /home/eyeflow/install-edge.sh
+if [ -f /opt/eyeflow/monitor/install/install-monitor.sh ] && rm -f /opt/eyeflow/monitor/install/install-monitor.sh
+files=(/home/eyeflow/README*)
+if [ -e "${files[0]}" ]; then
+    rm -R /home/eyeflow/README*
+fi
+files=(/opt/eyeflow/monitor/README*)
+if [ -e "${files[0]}" ]; then
+    rm -R /opt/eyeflow/monitor/README*
+fi
+files=(/opt/eyeflow/monitor/install*)
+if [ -e "${files[0]}" ]; then
+    rm -R /opt/eyeflow/monitor/install*
+fi
 rm -rf /opt/eyeflow/monitor/install/agent
 echo "###########################################################" | sudo tee -a $LOGFILE
 echo "#####   end of Metric Collector installation script   #####" | sudo tee -a $LOGFILE
