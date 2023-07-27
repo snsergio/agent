@@ -60,7 +60,7 @@ fi
 mkdir -p /opt/eyeflow/monitor/promtail/positions
 if [-e /opt/eyeflow/monitor/collector-config*] is present; then
     echo "##### saving existing collectot-config as .bak" | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/monitor/collector-config* /opt/eyeflow/monitor/collector-config*.bak
+    mv /opt/eyeflow/monitor/collector-config* /opt/eyeflow/monitor/install/collector-config*.bak
 fi
 echo "##### Cloning Edge repo and setting rights" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/install
@@ -74,6 +74,19 @@ rm -rf /opt/eyeflow/install/agent/install*
 rm -rf /opt/eyeflow/install/agent/README*
 rm -rf /opt/eyeflow/install/agent/stack
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
+if [-e /opt/eyeflow/monitor/install/collector-config*] is present; then
+    mv /opt/eyeflow/monitor/install/collector-config* /opt/eyeflow/monitor/collector-config*.bak
+fi
+if [ -f /opt/eyeflow/install/edge-install.log ]; then
+    LOGFILE="/opt/eyeflow/install/edge-install.log"
+else
+    LOGFILE="/opt/eyeflow/install/monitor-install.log"
+    touch /opt/eyeflow/install/monitor-install.log
+fi
+
+
+
+
 if [-e /opt/eyeflow/monitor/collector-config-v5.yaml.bak] is present; then
     echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
     echo "##### move new collectot-config-v5 to .source" | sudo tee -a $LOGFILE
