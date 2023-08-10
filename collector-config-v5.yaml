@@ -1,5 +1,5 @@
-# Monitoring config file for metric collector v5-PUB-3fc13f6-20230712140305 ############################
-# v5.10 ################################################################################################
+# Monitoring config file for metric collector v5-PUB-b729a82-20230810175358 ############################
+# v5.11 ################################################################################################
 # EDGE Station information #############################################################################
 # Station ID used to set Station's Customer-specific configuration
 #     customerName: set using Customer / Client Name or Identification
@@ -13,12 +13,17 @@ stationID:
 #-------------------------------------------------------------------------------------------------------
 # Metric RTDB URL and TLS ##############################################################################
 # Environment variables for metric collector operation
+# metricMethod: Select between push or exporter - on exporter mode, checck if PROXY is required.
+#     Defaults to "push" 
+# prometheusPush: Pushgateway URLs. If no URL is informed, metricMethod defaults to "exporter"
 #     pushUrl: Main pushgateway URL
 #     pushUrl2: Secondary pushgateway URL - Usually Eyeflow's edge servers pushgateway URL
 # tls: Pushgateway TLS information, configure pushUrl and pushurl2 parameters accordingly
 #     pushUrl(2)_TLS: use true only if pushgateway(2) has TLS enabled and only false if hasn't
 #     pushUrl(2)_TLS_Username: TLS auth username
 #     pushUrl(2)_TLS_Password: TLS auth password (base64-encoded)
+metricMethod:
+  
 prometheusPush:
   pushUrl: 
   pushUrl2: 

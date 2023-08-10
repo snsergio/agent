@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metric-collector-v5.10-PUB-3fc13f6-202307270829"
+versao = "metric-collector-v5.10-PUB-b729a82-20230810175358"
 #######################################################################################################################
 import logging 
 #######################################################################################################################
@@ -85,28 +85,20 @@ def get_metrics(configDict):
                 configDict["dockerExceptList"])
             resposta["dockerMetrics"] = retorno
             collLatency["dockerMetrics"] = time.time() - inicio
-        if configDict["getGpu"]:
+        if configDict["getGpuNvidia"] >=1:
             inicio = time.time()
-            if configDict["cpuArch"] == "x86_64":
-                configDict["getGpuNvidia"] = configDict["getGpu"]
-                configDict["getJetson"] = 0
-            elif configDict["cpuArch"] == "aarch64":
-                configDict["getGpuNvidia"] = 0
-                configDict["getJetson"] = configDict["getGpu"]
-            if configDict["getGpuNvidia"] >=1:
-                from lib import metricgpu as gpu
-                resposta["gpuMetrics"] = gpu.gpu_exec.collect_gpu(
-                    configDict["getGpuNvidia"])
-                resposta["jetsonMetrics"] = 0
-            elif configDict["getJetson"] >=1:
-                from lib import metricjetson as jet
-                resposta["jetsonMetrics"] = jet.jetson_exec.collect_jetson(
-                    configDict["getJetson"])
-                resposta["gpuMetrics"] = 0
+            from lib import metricgpu as gpu
+            resposta["gpuMetrics"] = gpu.gpu_exec.collect_gpu(
+                configDict["getGpuNvidia"])
+            resposta["jetsonMetrics"] = 0
             collLatency["gpuMetrics"] = time.time() - inicio
-        else:
-            configDict["getGpuNvidia"] = 0
-            configDict["getJetson"] = 0
+        elif configDict["getJetson"] >=1:
+            inicio = time.time()
+            from lib import metricjetson as jet
+            resposta["jetsonMetrics"] = jet.jetson_exec.collect_jetson(
+                configDict["getJetson"])
+            resposta["gpuMetrics"] = 0
+            collLatency["gpuMetrics"] = time.time() - inicio
         if configDict["getIpPing"]:
             inicio = time.time()
             from lib import metricping as ip
@@ -207,17 +199,42 @@ if __name__ == "__main__":
     from lib import versioncontrol as vc
     c.versionDict["metric-collector"] = versao
     configDict = mc.config_setup.get_config()
+    if configDict["getGpu"]:
+        if configDict["cpuArch"] == "x86_64":
+            configDict["getGpuNvidia"] = configDict["getGpu"]
+            configDict["getJetson"] = 0
+        elif configDict["cpuArch"] == "aarch64":
+            configDict["getGpuNvidia"] = 0
+            configDict["getJetson"] = configDict["getGpu"]
+    else:
+        configDict["getGpuNvidia"] = 0
+        configDict["getJetson"] = 0
     logging.basicConfig(filename = c.logPath + c.logFileName, level=logging.DEBUG, force=True)
-    del mc 
-    while True:
-        get_ntp(configDict)
-        metrics = get_metrics(configDict)
-        basic = pg.push_data(configDict, metrics)
-        basic.set_data()
-        basic.push_to_gateway()
-        basic.clean_prom()
-        # teste = vc.version_update.compare_versions(configDict)
-        if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
-        c.logFirstRun = 1
-        time.sleep(configDict["captureInterval"])
+    logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Metric Method: {configDict['metricMethod']}")
+    del mc
+    if configDict['metricMethod'] == "push":
+        while True:
+            get_ntp(configDict)
+            metrics = get_metrics(configDict)
+            basic = pg.push_data(configDict, metrics)
+            basic.set_data()
+            basic.push_to_gateway()
+            basic.clean_prom()
+            # teste = vc.version_update.compare_versions(configDict)
+            if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
+            c.logFirstRun = 1
+            time.sleep(configDict["captureInterval"])
+    else:
+        from prometheus_client import start_http_server
+        from lib import metricexporter as me
+        start_http_server(9089)
+        basic = me.exporter(configDict)
+        while True:
+            get_ntp(configDict)
+            basic.metricDict = get_metrics(configDict)
+            me.exporter.set_data(basic)
+            # teste = vc.version_update.compare_versions(configDict)
+            if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
+            c.logFirstRun = 1
+            time.sleep(configDict["captureInterval"])
 #######################################################################################################################

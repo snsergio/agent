@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.10-PUB-3fc13f6-202307270829"
+versao = "metricconfig-v5.11-PUB-b729a82-20230810175358"
 #######################################################################################################################
 import logging
 import time
@@ -103,12 +103,17 @@ class metric_attributes:
         #----------------------------------------------------------------------------------------------------------------------
     # Get RTDB information from configuration file
     def get_rtdb(configDict):
+        metric_attributes.resposta["metricMethod"] = "push"
         metric_attributes.resposta["pushUrl"] = None
         metric_attributes.resposta["pushUrl2"] = None
+        try: metric_attributes.resposta["metricMethod"] = configDict["metricMethod"].lower()
+        except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_rtdb: metricMethod not set")
         try: metric_attributes.resposta["pushUrl"] = configDict["prometheusPush"]["pushUrl"]
         except: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_rtdb: prometheusPush/pushUrl not set")
         try: metric_attributes.resposta["pushUrl2"] = configDict["prometheusPush"]["pushUrl2"]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_rtdb: prometheusPush/pushUrl2 not set")
+        if metric_attributes.resposta["metricMethod"] == None: metric_attributes.resposta["metricMethod"] = "push"
+        if metric_attributes.resposta["pushUrl"] in [None, ""] and metric_attributes.resposta["pushUrl2"] in [None, ""]: metric_attributes.resposta["metricMethod"] = "exporter"
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Get TLS information from configuration file
@@ -257,7 +262,7 @@ class metric_attributes:
         try: metric_attributes.resposta["getDocker"] = metric_attributes.validate_capture(configDict["captureMetrics"]["docker"])
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/docker not set. Assuming 'false'")
         try: metric_attributes.resposta["getGpu"] = metric_attributes.validate_capture(configDict["captureMetrics"]["gpu"])
-        except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/gpuNvidia not set. Assuming 'false'")
+        except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/gpu not set. Assuming 'false'")
         try: metric_attributes.resposta["getIpPing"] = metric_attributes.validate_capture(configDict["captureMetrics"]["ipPing"])
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/ipPing not set. Assuming 'false'")
         try: metric_attributes.resposta["getMonOsProc"] = metric_attributes.validate_capture(configDict["captureMetrics"]["monitoredOsProcess"])

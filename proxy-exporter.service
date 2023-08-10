@@ -1,0 +1,17 @@
+# Ubuntu services - proxy server - PUB-b729a82-20230810175358
+[Unit]
+Description=Start the Metrics Collector v5 proxy server
+
+[Service]
+Type=simple
+User=monitor
+Restart=always
+RestartSec=10
+CPUAccounting=yes
+MemoryAccounting=yes
+
+ExecStart=/home/monitor/monitor/pushprox/pushprox-proxy --web.listen-address=":9081"
+
+[Install]
+WantedBy=multi-user.target
+
