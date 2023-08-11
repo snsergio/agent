@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricnet-v5.11-PUB-9aac242-20230810180222"
+versao = "metricnet-v5.11-PUB-0da2d21-20230811134803"
 #######################################################################################################################
 import logging
 import time
@@ -46,6 +46,7 @@ class net_exec:
         #----------------------------------------------------------------------------------------------------------------------
     def net_metrics(measure1, measure2, timeInt):
         resposta, activeNic = {}, 0
+        nicName, nicIP = "nonic", "0.0.0.0"
         for netCount in range(len(measure2["netout"])):
             if "state UP" in measure2["netout"][netCount]:
                 nicName = measure2["netout"][netCount].split(":")[1].strip()
