@@ -1,9 +1,9 @@
 #!/bin/bash
 # LOG file at /opt/eyeflow/install/monitor-install-<date time>.log
-# wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
+# wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install/install-monitor.sh
 # chmod +x install-monitor.sh
 # sudo ./install-monitor.sh
-##### Install Monitor v5.10
+##### Install Monitor v5.11
 set -eo pipefail
 if [ "$EUID" -ne 0 ]
     then echo "Please run as root"
@@ -65,6 +65,9 @@ echo "##### Install PIP packages" | sudo tee -a $LOGFILE
 if [ $(uname -i) == "aarch64" ]; then
     echo "##### Installing ARM jetson-stats" | sudo tee -a $LOGFILE
     python3 -m pip install -U jetson-stats
+    arch="arm"
+else
+    erch="x86"
 fi
 echo "##### Creating required folders" | sudo tee -a $LOGFILE
 mkdir -p /opt/eyeflow/monitor/lib
@@ -92,9 +95,12 @@ fi
 setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
-rm -rf /opt/eyeflow/install/agent/install*
+rm -rf /opt/eyeflow/install/agent/grafana-stack
+rm -rf /opt/eyeflow/install/agent/install
 rm -rf /opt/eyeflow/install/agent/README*
-rm -rf /opt/eyeflow/install/agent/stack
+if [ $arch == "x86" ]; then
+    rm -rf /opt/eyeflow/install/agent/jetson
+fi
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
 if ls /opt/eyeflow/install/collector-config-v4.bak 1> /dev/null 2>&1; then
     echo "##### returning existing collector-config-v4 to monitor as collector-config-v4.bak" | sudo tee -a $LOGFILE
