@@ -22,8 +22,13 @@ if [ "$EUID" -ne 0 ]
     then echo "Please run as root" | sudo tee -a $LOGFILE
     exit
 fi
-gpu=$(/usr/bin/lspci | grep -i '.* vga .* nvidia .*')
+if gpu=$(/usr/bin/lspci | grep -i '.* vga .* nvidia .*'); then
+    echo $gpu | sudo tee -a $LOGFILE
+else
+    gpu="none"
+fi
 if [[ -z $gpu ]]; then gpu="none"
+fi
 shopt -s nocasematch
 if [[ $gpu == *' nvidia '* ]]
     then echo "No NVIDIA GPU found, ensure correct collector configuration" | sudo tee -a $LOGFILE
@@ -110,8 +115,10 @@ if ls /opt/eyeflow/install/collector-config-v5.bak 1> /dev/null 2>&1; then
     echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
     echo "##### move new collectot-config-v5 to .source" | sudo tee -a $LOGFILE
     echo "##### restoring previous collectot-config-v5 " | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.source
-    mv /opt/eyeflow/install/collector-config-v5.bak /opt/eyeflow/monitor/collector-config-v5.yaml
+    if [ -f /opt/eyeflow/monitor/collector-config-v5.yaml ]; then
+        mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.source
+        mv /opt/eyeflow/install/collector-config-v5.bak /opt/eyeflow/monitor/collector-config-v5.yaml
+    fi
 fi
 echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor/promtail
@@ -169,6 +176,7 @@ if [ -e "${files[0]}" ]; then
     rm -R /opt/eyeflow/monitor/install*
 fi
 rm -rf /opt/eyeflow/monitor/install/agent
+clear
 echo "###########################################################" | sudo tee -a $LOGFILE
 echo "#####   end of Metric Collector installation script   #####" | sudo tee -a $LOGFILE
 echo "##### Finished at: $(date)" | sudo tee -a $LOGFILE
