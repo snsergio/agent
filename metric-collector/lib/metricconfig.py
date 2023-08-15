@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.11-PUB-2dc1e70-20230815115449"
+versao = "metricconfig-v5.11-PUB-4e75cfc-20230815191155"
 #######################################################################################################################
 import logging
 import time
@@ -51,7 +51,7 @@ class config_setup:
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-config_setup.get_config: Setup file agentPath/scriptPath set to {c.scriptPath}")
             c.logPath = configPath
         if c.logPath[-1:] != "/": c.logPath += "/"
-        try: metric_attributes.resposta["hostName"] = os.uname()[1]
+        try: metric_attributes.resposta["hostName"] = os.uname()[1].split(".")[0]
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-config_setup.get_config: Hostname not defined, set to {metric_attributes.resposta['hostName']}")
         if metric_attributes.resposta["hostName"] == None or metric_attributes.resposta["hostName"] == "": metric_attributes.resposta["hostName"] = "notset"
         try: infoout = c.exec_cmd(["lscpu"], c.debugMode)["output"].splitlines()

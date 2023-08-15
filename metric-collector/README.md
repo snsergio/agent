@@ -1,9 +1,12 @@
 # How install metrics collector on Edge Station
-Metric collector is the agent to gather metric information from Ubuntu Station, push to Prometheus TSDB and monitored by Grafana stack.
+Metric collector is the agent to gather metric information from Ubuntu Station, monitored by Grafana stack.
+The agent can be configured as an Exporter (preferred) or in some cases push to Prometheus TSDB through Pushgateway 
 You need these requirements to accomplish the desired results:
   - Need to know how set collector-config parameters (check details at:)
-    > https://github.com/Eyeflow-AI/station-monitoring/tree/main/metric-collector
-  - Station's eyeflow user password
+    > https://github.com/Eyeflow-AI/station-monitoring/tree/main/install/metric-collector
+  - Station's login credentials - user: eyeflow and its password
+  - If not done yet, set the host's FQDN to include **group** and **customer**
+    Example: hostname.subsidiary.company (edge-1.mainline.mycompany)
 
 To install the monitoring agent, scrap station's data and send to Prometheus, follow these steps:
 - Log into the Ubuntu Station as superuser **eyeflow** make sure eyeflow user is configured as sudoer;
@@ -41,3 +44,16 @@ To install the monitoring agent, scrap station's data and send to Prometheus, fo
   > sudo systemctl status metric-collector.service
 - You may check metric collector's log file
   > cat /opt/eyeflow/monitor/monitoring-v5.log
+
+To upgrade Metric Collector:
+- Log into the Ubuntu Station as superuser **eyeflow** make sure eyeflow user is configured as sudoer;
+  > ssh eyeflow@<station's IP address>
+- Download the installation script at home folder;
+  > wget https://raw.githubusercontent.com/snsergio/agent/main/install/upgrade-monitor.sh
+- Make sure the script has execution rights:
+  > chmod +x upgrade-monitor.sh
+- Run the script as SUDO:
+  > sudo ./upgrade-monitor.sh
+- Enter the eyeflow user's password to authorize elevation;
+- Check screen messages, if any action is required, just keep all default and hit 'OK' usually navigate with 'TAB' and select with 'ENTER'
+- Wait for the end of execution message with edit collector-config instructions and how start services:
