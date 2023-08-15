@@ -21,7 +21,6 @@ else
     VERSAO="none"
 fi
 if [ "$VERSAO" != "none" ]; then
-    rm -R /opt/eyeflow/monitor
     mkdir -p /opt/eyeflow/monitor/install
 else
     echo "Previous version not found... Exiting"
@@ -67,6 +66,9 @@ rm -rf /opt/eyeflow/install/agent/grafana-stack
 echo "----- Adding files -----" | sudo tee -a $LOGFILE
 rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
 mv /opt/eyeflow/monitor/metric-collector/* /opt/eyeflow/monitor
+rm -rf /opt/eyeflow/monitor/metric-collector
+rm -rf /opt/eyeflow/monitor/README*
+chmod +x /opt/eyeflow/monitor/lib/pushprox-client
 echo "----- Preparing Collector -----" | sudo tee -a $LOGFILE
 cp /opt/eyeflow/monitor/metric-collector.service /etc/systemd/system
 cp /opt/eyeflow/monitor/proxy-exporter.service /etc/systemd/system
@@ -77,7 +79,7 @@ clear
 echo "+---------------------------------------------------------------------------------------+"
 echo "! Edit and configure collector-config.yaml file                                         !"
 echo "! - The previous configuration file is at /opt/eyeflow/monitor-old                      !"
-echo "!   existing version is '{$VERSION}                                                     !"
+echo "!   existing version is '{$VERSION}'                                                          !"
 echo "! - If the collector will run as EXPORTER, configure Prometheus to scrape this host at: !"
 echo "!   FQDN: '$(hostname --fqdn)'                                                          !"
 echo "! - Then start metric collector and proxy exporter:                                     !"
