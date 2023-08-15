@@ -1,8 +1,8 @@
 #!/bin/bash
 # LOG file at /opt/eyeflow/install/monitor-install-<date time>.log
-# wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install-monitor-upgrade.sh
-# chmod +x install-monitor-upgrade.sh
-# sudo ./install-monitor-upgrade.sh
+# wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install/upgrade-monitor.sh
+# chmod +x upgrade-monitor.sh
+# sudo ./upgrade-monitor.sh
 ##### Install Monitor Upgrade v5.11
 set -eo pipefail
 if [ "$EUID" -ne 0 ]
