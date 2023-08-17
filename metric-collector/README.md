@@ -92,6 +92,7 @@ To upgrade Metric Collector:
   > Line 11 should have something like this:
   
   > ExecStart=/opt/eyeflow/monitor/lib/pushprox-client --proxy-url=https://proxy.CUSTOMER.eyeflow.ai/
+  
   > ----------------------------------------------- replace CUSTOMER as appropriate ^
 - Stop proxy service if it's running:
   > sudo systemctl stop proxy-exporter.service
