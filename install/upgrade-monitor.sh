@@ -99,4 +99,5 @@ echo "! - Check if both run with no errors:                                     
 echo "!   sudo systemctl status proxy-exporter.service                                            !"
 echo "!   sudo systemctl status metric-collector.service                                          !"
 echo "+-------------------------------------------------------------------------------------------+"
+rm -rf upfrade-monitor.sh
 echo "end of script"
