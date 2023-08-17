@@ -5,7 +5,9 @@
 # sudo ./upgrade-monitor.sh
 ##### Install Monitor Upgrade v5.11
 set -eo pipefail
-if [ $(pwd) != "$HOME" ]; then
+VALIDDIR="home"
+WORKDIR=$(pwd)
+if [[ "$WORKDIR" != *"$VALIDDIR"* ]]; then
   echo "Please start the script at user's home directory"
   exit
 fi
