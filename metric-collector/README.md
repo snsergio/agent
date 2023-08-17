@@ -90,6 +90,7 @@ To upgrade Metric Collector:
 - If you select 'exporter' method, the status should not show any "Push" errors, in case of this errors, stop and restart the service
 - Edit the proxy-exporter.service file and replace the PROXY URL to reflect the correct URL for the customer:
   > Line 11 should have something like this:
+  
   > ExecStart=/opt/eyeflow/monitor/lib/pushprox-client --proxy-url=https://proxy.CUSTOMER.eyeflow.ai/
   > ----------------------------------------------- replace CUSTOMER as appropriate ^
 - Stop proxy service if it's running:
