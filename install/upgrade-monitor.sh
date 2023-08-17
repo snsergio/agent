@@ -5,6 +5,10 @@
 # sudo ./upgrade-monitor.sh
 ##### Install Monitor Upgrade v5.11
 set -eo pipefail
+if [ "$(pwd)" != "$HOME" ]; then
+  echo "Please start the script at user's home directory"
+  exit
+fi
 if [ "$EUID" -ne 0 ]
     then echo "Please run as root"
     exit
@@ -79,17 +83,18 @@ systemctl enable proxy-exporter.service
 systemctl daemon-reload
 echo "----- Host FQDN: '$(hostname --fqdn)' -----" | sudo tee -a $LOGFILE
 clear
-echo "+---------------------------------------------------------------------------------------+"
-echo "! Edit and configure collector-config.yaml file                                         !"
-echo "! - The previous configuration file is at /opt/eyeflow/monitor-old                      !"
-echo "!   existing version is '$VERSAO'                                                          !"
-echo "! - If the collector will run as EXPORTER, configure Prometheus to scrape this host at: !"
-echo "!   FQDN: '$(hostname --fqdn)'                                                          !"
-echo "! - Then start metric collector and proxy exporter:                                     !"
-echo "!   sudo systemctl start proxy-exporter.service                                         !"
-echo "!   sudo systemctl start metric-collector.service                                       !"
-echo "! - Check if both run with no errors:                                                   !"
-echo "!   sudo systemctl status proxy-exporter.service                                        !"
-echo "!   sudo systemctl status metric-collector.service                                      !"
-echo "+---------------------------------------------------------------------------------------+"
+echo "+-------------------------------------------------------------------------------------------+"
+echo "! Edit and configure collector-config.yaml file                                             !"
+echo "! - The previous configuration file is at /opt/eyeflow/monitor-old                          !"
+echo "!   saved version is '$VERSAO'                                                              !"
+echo "! - If the collector will run as EXPORTER, configure Prometheus to scrape this host at:     !"
+echo "!   FQDN: '$(hostname --fqdn)'                                                              !"
+echo "! - Edit proxy-exporter.service to reflect the correct export URL - (correct customer name) !"
+echo "! - Then start metric collector and proxy exporter:                                         !"
+echo "!   sudo systemctl start proxy-exporter.service                                             !"
+echo "!   sudo systemctl start metric-collector.service                                           !"
+echo "! - Check if both run with no errors:                                                       !"
+echo "!   sudo systemctl status proxy-exporter.service                                            !"
+echo "!   sudo systemctl status metric-collector.service                                          !"
+echo "+-------------------------------------------------------------------------------------------+"
 echo "end of script"
