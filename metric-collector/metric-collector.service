@@ -1,4 +1,4 @@
-# Ubuntu services - metric collector - PUB-55c810d-20230817164120
+# Ubuntu services - metric collector - PUB-250e952-20230817165110
 [Unit]
 Description=Start the Edge Station Metrics Collector v5 exporter
 
