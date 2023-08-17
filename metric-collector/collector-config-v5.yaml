@@ -1,4 +1,4 @@
-# Monitoring config file for metric collector v5-PUB-250e952-20230817165110 ############################
+# Monitoring config file for metric collector v5-PUB-535e5c0-20230817194124 ############################
 # v5.11 ################################################################################################
 # EDGE Station information #############################################################################
 # Station ID used to set Station's Customer-specific configuration
@@ -9,7 +9,7 @@
 stationID:
   customerName: 
   stationName: 
-  StationIP:  
+  StationIP: 
 #-------------------------------------------------------------------------------------------------------
 # Metric RTDB URL and TLS ##############################################################################
 # Environment variables for metric collector operation
@@ -22,7 +22,7 @@ stationID:
 #     pushUrl(2)_TLS: use true only if pushgateway(2) has TLS enabled and only false if hasn't
 #     pushUrl(2)_TLS_Username: TLS auth username
 #     pushUrl(2)_TLS_Password: TLS auth password (base64-encoded)
-metricMethod:
+metricMethod: 
   
 prometheusPush:
   pushUrl: 
@@ -118,7 +118,7 @@ captureMetrics:
 # Metrics additional information ###########
 # apiUrl: List the URL or IP:port to test REST GET response
 #     Example: Sensor in production line. Check GET response (==2xx or !=2xx)
-apiUrl:              
+apiUrl: 
 #-------------------------------------------------------------------------------------------------------
 # backup: Backup routine details
 #     folder:     Folder where backup data is stored (full path)
@@ -128,13 +128,13 @@ apiUrl:
 #         - monthly (m), daily (d), hourly (h) - ex: 7d (weekly); 12h (twice a day)
 backup:
   folder: 
-  filePrefix:
+  filePrefix: 
   fileSuffix: 
   frequency: 1d
 #-------------------------------------------------------------------------------------------------------
 # Eyeflow's camera detection component URL and port number
 # camUrl: IP and port list to access CAMERA API
-camUrl:  
+camUrl: 
 #-------------------------------------------------------------------------------------------------------
 # List of Docker container keywords (or all) to verify if is running at host and capture active time
 #     dockerList: Must be 'all' or container names list
@@ -151,11 +151,11 @@ ipPingList:
 #-------------------------------------------------------------------------------------------------------
 # monitoredOsProcessList: List of Ubuntu host process keywords to check if is running and get metrics
 #     - if enabled must contain a name - this paramenter do not accept 'all' keywork
-monitoredOsProcessList:  
+monitoredOsProcessList: 
 #-------------------------------------------------------------------------------------------------------
 # remoteOpenList: List of IP:PORT to check if is open or listening
 #     - Format: <URL> or <IP>:<PORT>
-remoteOpenList:  
+remoteOpenList: 
 #-------------------------------------------------------------------------------------------------------
 # topOsProcessCount: Number of 'top offender processes' to capture data
 #     - Valid if captureMetrics/topProcess is set to true

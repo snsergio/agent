@@ -49,11 +49,57 @@ To upgrade Metric Collector:
 - Log into the Ubuntu Station as superuser **eyeflow** make sure eyeflow user is configured as sudoer;
   > ssh eyeflow@<station's IP address>
 - Download the installation script at home folder;
-  > wget https://raw.githubusercontent.com/snsergio/agent/main/install/upgrade-monitor.sh
+  > wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install/upgrade-monitor.sh
 - Make sure the script has execution rights:
   > chmod +x upgrade-monitor.sh
 - Run the script as SUDO:
   > sudo ./upgrade-monitor.sh
 - Enter the eyeflow user's password to authorize elevation;
 - Check screen messages, if any action is required, just keep all default and hit 'OK' usually navigate with 'TAB' and select with 'ENTER'
-- Wait for the end of execution message with edit collector-config instructions and how start services:
+- Wait for the end of execution message with instructions
+- Go to Eyeflow's monitor folder:
+  > cd /opt/eyeflow/monitor
+- Edit Metric Collector's configuration file and fill data as appropriate. This is an YAML file and must follow the required syntax
+  > sudo nano collector-config-v5.yaml
+- Update the collector-config-v5.yaml file with contents of the previous configuration file, some new variables are added:
+  > customerName: <Use this field to specify customer's name>
+  > stationName: <Use this field to specify a group of servers - Specific server name will be set at hostname>
+  > metricMethod: <Use the default 'exporter' option, in this case no pushURL information is required>
+- When using EXPORTER method, proxy service may be required, pleasse check details ahead
+- After edit the configuration file, proceed with the following steps if required:
+- Stop collector service if it's running:
+  > sudo systemctl stop metric-collector.service
+- Make sure you have the correct service file installed:
+  > sudo cp metric-collector.service /etc/systemd/system
+- Enable metric collector service if you have not did so:
+  > sudo systemctl enable metric-collector.service
+  > sudo systemctl daemon-reload
+- Start metric collector service and check its status:
+  > sudo systemctl start metric-collector.service
+  > sudo systemctl status metric-collector.service
+- Configure host's FQDN to reflect customer's information or to differentiate from other stations
+  > Example: host: edge-1 => should be set to FQDN: edge-1.company.com *or* edge-1.company.line1
+- To change FQDN - replace "edge-1.company.line1" as appropriate:
+  > sudo hostnamectl set-hostname edge-1.company.line1
+- Edit /etc/hosts to reflect host's FQDN and short name:
+  > sudo nano /etc/hosts
+  > Check if host name is set to the format below:
+  > ....
+  > 192.168.100.101    edge-1.company.line1    edge-1
+  > ....
+- If you select 'exporter' method, the status should not show any "Push" errors, in case of this errors, stop and restart the service
+- Edit the proxy-exporter.service file and replace the PROXY URL to reflect the correct URL for the customer:
+  > Line 11 should have something like this:
+  > ExecStart=/opt/eyeflow/monitor/lib/pushprox-client --proxy-url=https://proxy.CUSTOMER.eyeflow.ai/
+  > ----------------------------------------------- replace CUSTOMER as appropriate ^
+- Stop proxy service if it's running:
+  > sudo systemctl stop proxy-exporter.service
+- Make sure you have the correct service file installed:
+  > sudo cp proxy-exporter.service /etc/systemd/system
+- Enable proxy exporter service if you have not did so:
+  > sudo systemctl enable proxy-exporter.service
+  > sudo systemctl daemon-reload
+- Start proxy exporter service and check its status:
+  > sudo systemctl start proxy-exporter.service
+  > sudo systemctl status proxy-exporter.service
+- Update prometheus with host's FQDN. Ask for support if required
