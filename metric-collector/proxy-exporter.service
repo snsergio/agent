@@ -1,4 +1,4 @@
-# Ubuntu services - proxy client - PUB-535e5c0-20230817194124
+# Ubuntu services - proxy client - PUB-3380e18-20230817201104
 [Unit]
 Description=Start the Metrics Collector v5 proxy client
 
@@ -10,7 +10,9 @@ RestartSec=10
 CPUAccounting=yes
 MemoryAccounting=yes
 
-ExecStart=/opt/eyeflow/monitor/lib/pushprox-client --proxy-url=https://proxy.monitoring.eyeflow.ai/
+ExecStart=/opt/eyeflow/monitor/lib/pushprox-client \
+  --proxy-url=https://proxy.monitoring.eyeflow.ai/ \
+  --log.level=warn
 
 [Install]
 WantedBy=multi-user.target
