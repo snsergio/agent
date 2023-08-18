@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricexporter-v5.11-PUB-1d26faa-20230818190142"
+versao = "metricexporter-v5.11-PUB-4443369-20230818204422"
 #######################################################################################################################
 import logging
 import time
@@ -430,5 +430,183 @@ class exporter(object):
         self.ntpDiscrepancy.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).set(self.configDict["ntpTimeDiscrepancy"])
         self.ntpPollingPeriod.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).set(self.configDict["ntpPollingPeriod"])
         self.ntpStatus.labels(customer=self.configDict["customerName"], station=self.configDict["stationName"], host=self.configDict["hostName"]).set(self.configDict["ntpStatus"])
+        return
+        #----------------------------------------------------------------------------------------------------------------------
+    def clean_prom(self):
+        if self.configDict["getApiGet"] == 2:
+            self.apiGetUrl.clear()
+        if self.configDict["getApiGet"] >= 1:
+            self.apiGetExecError.clear()
+            self.apiGetExists.clear()
+            self.apiGetStatus.clear()
+            self.apiGetResponse.clear()
+        if self.configDict["getBackup"] >= 1:
+            self.bkpExecError.clear()
+            self.bkpStatus.clear()
+            self.bkpAccess.clear()
+            self.bkpModified.clear()
+            self.bkpExpire.clear()
+        if self.configDict["getCam"] == 2:
+            self.camSeq.clear()
+            self.camHeight.clear()
+            self.camWidth.clear()
+        if self.configDict["getCam"] >= 1:
+            self.camExecError.clear()
+            self.camRestartError.clear()
+            self.camStatus.clear()
+            self.camHeartbeat.clear()
+        if self.configDict["getDisk"] == 2:
+            self.diskSize.clear()
+            self.diskUsed.clear()
+        if self.configDict["getDisk"] >=1:
+            self.diskExecError.clear()
+            self.diskUtilization.clear()
+            self.diskRS.clear()
+            self.diskWS.clear()
+            self.diskRRQS.clear()
+            self.diskWRQS.clear()
+            self.diskRWait.clear()
+            self.diskWWait.clear()
+            self.diskAQL.clear()
+        if self.configDict["getDocker"] == 2:
+            self.dockerPorts.clear()
+        if self.configDict["getDocker"] >= 1:
+            self.dockerExecError.clear()
+            self.dockerStatusInfo.clear()
+            self.dockerStatus.clear()
+            self.dockerStatusAge.clear()
+            self.dockerCreated.clear()
+        if self.configDict["getGpuNvidia"] == 2:
+            self.gpuMulti.clear()
+            self.gpuState.clear()
+            self.gpuMode.clear()
+            self.gpuBrand.clear()
+            self.gpuArch.clear()
+            self.gpuDisplayMode.clear()
+            self.gpuDisplayActive.clear()
+        if self.configDict["getGpuNvidia"] == 1:
+            self.gpuExecError.clear()
+            self.gpuCuda.clear()
+            self.gpuDriver.clear()
+            self.gpuMemory.clear()
+            self.gpuMemUtilization.clear()
+            self.gpuName.clear()
+            self.gpuPowerDraw.clear()
+            self.gpuTemperature.clear()
+            self.gpuUtilization.clear()
+            self.gpuFanPct.clear()
+            self.gpuMemReserved.clear()
+            self.gpuMemUsed.clear()
+            self.gpuMemFree.clear()
+            self.gpuTempMax.clear()
+            self.gpuTempSlow.clear()
+            self.gpuTempTarget.clear()
+            self.gpuPowerLimit.clear()
+            self.gpuPowerMax.clear()
+        if self.configDict["getJetson"] == 2:
+            self.jetsonCpuTotal.clear()
+            self.jetsonPowerThermal.clear()
+            self.jetsonTempWifi.clear()
+            self.jetsonNvpModel.clear()
+        if self.configDict["getJetson"] >= 1:
+            self.jetsonExecError.clear()
+            self.jetsonCuda.clear()
+            self.jetsonDriver.clear()
+            self.jetsonFanPercent.clear()
+            self.jetsonGpuUse.clear()
+            self.jetsonCpuAvg.clear()
+            self.jetsonCpuMax.clear()
+            self.jetsonMemTotalMB.clear()
+            #self.jetsonPower.clear()
+            self.jetsonMemUsed.clear()
+            self.jetsonTempBoard.clear()
+            self.jetsonTempCpu.clear()
+            self.jetsonTempGpu.clear()
+            #self.jetsonTime.clear()
+            #self.jetsonUptime.clear()
+            self.jetsonName.clear()
+        if self.configDict["getIpPing"] >= 1:
+            self.pingExecError.clear()
+            self.pingtime.clear()
+            self.pingLoss.clear()
+        if self.configDict["getMonOsProc"] >= 1:
+            self.processCPU.clear()
+            self.processMEM.clear()
+            self.processPID.clear()
+            self.processTime.clear()
+            self.processActive.clear()
+            self.processMissing.clear()
+        if self.configDict["getNetwork"] >= 1:
+            self.networkIP.clear()
+            self.networkRx.clear()
+            self.networkTx.clear()
+            self.netExecError.clear()
+        if self.configDict["getRemoteOpen"] >= 1:
+            self.remoteOpenExecError.clear()
+            self.remoteOpenStatus.clear()
+            self.remoteOpenResponse.clear()
+        if self.configDict["getSelfIp"] >= 1:
+            self.selfIpPresent.clear()
+        if self.configDict["getSensor"] == 2:
+            self.serverCoreV.clear()
+            self.server3v.clear()
+            self.server5v.clear()
+            self.server12v.clear()
+        if self.configDict["getSensor"] >= 1:
+            self.serverSensorExecError.clear()
+            self.serverChassisFan.clear()
+            self.serverCpuFan.clear()
+            self.serverPciPower.clear()
+            self.serverCpuTemp.clear()
+            self.serverMbTemp.clear()
+            self.serverPciTemp.clear()
+        if self.configDict["getServer"] == 2:
+            self.loadAvg1m.clear()
+            self.loadAvg5m.clear()
+            self.loadAvg15m.clear()
+            self.utilizationUser.clear()
+            self.utilizationSystem.clear()
+            self.taskTotal.clear()
+            self.taskSleeping.clear()
+            self.taskZombie.clear()
+        if self.configDict["getServer"] >= 1:
+            self.serverExecError.clear()
+            self.serverCores.clear()
+            self.serverMemFree.clear()
+            self.serverMemCached.clear()
+            self.serverMemTotal.clear()
+            self.serverMemUsed.clear()
+            self.serverUptime.clear()
+            self.serverTimeStamp.clear()
+            self.serverTimeStampUtc.clear()
+            self.taskRunning.clear()
+            self.taskStopped.clear()
+            self.utilizationIdle.clear()
+        if self.configDict["getSysAgent"] == 2:
+            self.sysagentPID.clear()
+            self.sysagentMem.clear()
+        if self.configDict["getSysAgent"] >= 1:
+            self.sysagentExecError.clear()
+            self.sysagentLoaded.clear()
+            self.sysagentActive.clear()
+            self.sysagentError.clear()
+        if self.configDict["getTopProcess"] >= 1:
+            self.topExecError.clear()
+            self.topProcCPU.clear()
+            self.topProcMEM.clear()
+            self.topProcPID.clear()
+            self.topProcName.clear()
+        self.configExecError.clear()
+        self.hostArch.clear()
+        self.hostOsBit.clear()
+        self.hostVendorID.clear()
+        self.hostModel.clear()
+        self.collectorVersion.clear()
+        self.heartBeat.clear()
+        #self.ntpServerList.clear()
+        self.ntpIp.clear()
+        self.ntpDiscrepancy.clear()
+        self.ntpPollingPeriod.clear()
+        self.ntpStatus.clear()
         return
         #----------------------------------------------------------------------------------------------------------------------

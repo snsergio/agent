@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metric-collector-v5.11-PUB-1d26faa-20230818190142"
+versao = "metric-collector-v5.11-PUB-4443369-20230818204422"
 #######################################################################################################################
 import logging 
 #######################################################################################################################
@@ -232,6 +232,7 @@ if __name__ == "__main__":
         while True:
             get_ntp(configDict)
             basic.metricDict = get_metrics(configDict)
+            me.exporter.clean_prom(basic)
             me.exporter.set_data(basic)
             # teste = vc.version_update.compare_versions(configDict)
             if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
