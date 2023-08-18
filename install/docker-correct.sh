@@ -24,4 +24,10 @@ fi
 cd ..
 systemctl restart metric-collector.service
 systemctl status metric-collector.service
+cd ~/
+if [ ! -f ./docker-correct.sh ]; then
+    echo "Please remove the docker correct script"
+else
+    rm docker-correct.sh
+fi
 echo "DONE!"
