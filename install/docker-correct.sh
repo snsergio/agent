@@ -1,4 +1,8 @@
 #!/bin/bash
+currentscript="$0"
+function finish {
+    echo "Securely shredding ${currentscript}"; shred -u ${currentscript};
+}
 clear
 set -eo pipefail
 if [ "$EUID" -ne 0 ]; then
@@ -21,13 +25,7 @@ else
     rm metricexporter.py
     wget https://raw.githubusercontent.com/snsergio/agent/main/metric-collector/lib/metricexporter.py
 fi
-cd ..
 systemctl restart metric-collector.service
-cd $HOME
-if [ ! -f /$HOME/docker-correct.sh ]; then
-    echo "Please remove the docker correct script"
-else
-    rm -f /$HOME/docker-correct.sh
-fi
-systemctl status metric-collector.service
+systemctl status metric-collector.service --no-pager
 echo "DONE!"
+trap finish EXIT
