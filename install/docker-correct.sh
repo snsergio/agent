@@ -25,6 +25,8 @@ else
     rm metricexporter.py
     wget https://raw.githubusercontent.com/snsergio/agent/main/metric-collector/lib/metricexporter.py
 fi
+cd $HOME
+cd ~
 systemctl restart metric-collector.service
 systemctl status metric-collector.service --no-pager
 echo "DONE!"
