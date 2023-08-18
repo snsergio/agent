@@ -8,7 +8,9 @@ You need these requirements to accomplish the desired results:
   - If not done yet, set the host's FQDN to include **group** and **customer**
     Example: hostname.subsidiary.company (edge-1.mainline.mycompany)
 
-To install the monitoring agent, scrap station's data and send to Prometheus, follow these steps:
+To install the monitoring agent, scrap station's data and send to Prometheus, follow these steps. If you want to UPGRADE an existing installation, check below.
+- New installation:
+
 - Log into the Ubuntu Station as superuser **eyeflow** make sure eyeflow user is configured as sudoer;
   > ssh eyeflow@<station's IP address>
 - If DOCKER is used on the station, make sure eyeflow user is in Docker's group;
@@ -16,7 +18,7 @@ To install the monitoring agent, scrap station's data and send to Prometheus, fo
 - For systems where (NVIDIA) GPU is available, make sure NVIDIA package and nvidia-smi are installed and run with no errors;
   > nvidia-smi
 - Download the installation script at home folder;
-  > wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
+  > wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install/install-monitor.sh
 - Make sure the script has execution rights:
   > chmod +x install-monitor.sh
 - Run the script as SUDO:
