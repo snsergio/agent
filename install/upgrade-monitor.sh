@@ -15,7 +15,7 @@ if [ "$EUID" -ne 0 ]
     then echo "Please run as root"
     exit
 fi
-LOGFILE="/opt/eyeflow/monitor/install/monitor-install.log"
+LOGFILE="/opt/eyeflow/monitor/install/upgrade-monitor.log"
 if [ -d /opt/eyeflow/monitor ]; then
     mv /opt/eyeflow/monitor /opt/eyeflow/monitor-old
 fi
@@ -32,7 +32,7 @@ else
     echo "Previous version not found... Exiting"
     exit
 fi
-touch /opt/eyeflow/monitor/install/monitor-install.log
+touch /opt/eyeflow/monitor/install/upgrade-monitor.log
 echo "----- Starting Metric Collector Upgrade -----" | sudo tee -a $LOGFILE
 date | sudo tee -a $LOGFILE
 echo "Previous metric collector version '$VERSAO'" | sudo tee -a $LOGFILE
@@ -48,7 +48,12 @@ echo "----- Install PIP packages -----" | sudo tee -a $LOGFILE
 if [ $(uname -i) == "aarch64" ]; then
     echo "----- Installing ARM jetson-stats -----" | sudo tee -a $LOGFILE
     python3 -m pip install -U jetson-stats
+    arch="arm"
+else
+    erch="x86"
 fi
+
+
 echo "----- Cloning Edge repo and setting rights -----" | sudo tee -a $LOGFILE
 cd /opt/eyeflow/monitor/install
 rm -rf /opt/eyeflow/monitor/install/agent
@@ -77,6 +82,8 @@ rm -rf /opt/eyeflow/monitor/prometheus-proxy
 rm -rf /opt/eyeflow/monitor/install/agent
 rm -rf /opt/eyeflow/monitor/README*
 chmod +x /opt/eyeflow/monitor/lib/pushprox-client
+
+
 echo "----- Preparing Collector -----" | sudo tee -a $LOGFILE
 cp /opt/eyeflow/monitor/metric-collector.service /etc/systemd/system
 cp /opt/eyeflow/monitor/proxy-exporter.service /etc/systemd/system
@@ -99,5 +106,5 @@ echo "! - Check if both run with no errors:                                     
 echo "!   sudo systemctl status proxy-exporter.service                                            !"
 echo "!   sudo systemctl status metric-collector.service                                          !"
 echo "+-------------------------------------------------------------------------------------------+"
-rm -rf upfrade-monitor.sh
+rm -rf upgrade-monitor.sh
 echo "end of script"

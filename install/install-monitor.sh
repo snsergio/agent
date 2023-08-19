@@ -5,17 +5,19 @@
 # sudo ./install-monitor.sh
 ##### Install Monitor v5.11
 set -eo pipefail
+VALIDDIR="home"
+WORKDIR=$(pwd)
+if [[ "$WORKDIR" != *"$VALIDDIR"* ]]; then
+  echo "Please start the script at user's home directory"
+  exit
+fi
 if [ "$EUID" -ne 0 ]
     then echo "Please run as root"
     exit
 fi
-mkdir -p /opt/eyeflow/install
-if [ -f /opt/eyeflow/install/edge-install.log ]; then
-    LOGFILE="/opt/eyeflow/install/edge-install.log"
-else
-    LOGFILE="/opt/eyeflow/install/monitor-install.log"
-    touch /opt/eyeflow/install/monitor-install.log
-fi
+mkdir -p /opt/eyeflow/monitor/install
+LOGFILE="/opt/eyeflow/monitor/install/monitor-install.log"
+touch /opt/eyeflow/monitor/install/monitor-install.log
 echo "##### Installing Eyeflow Monitoring agent on EDGE server #####" | sudo tee -a $LOGFILE
 date | sudo tee -a $LOGFILE
 if [ "$EUID" -ne 0 ]
@@ -40,8 +42,8 @@ if [ ! $(lsb_release -si) == "Ubuntu" ]
 fi
 lsb_release -si | sudo tee -a $LOGFILE
 lsb_release -sr | sudo tee -a $LOGFILE
-if [[ ! $PWD = /opt/eyeflow/install ]]; then
-    cp ./install-monitor.sh /opt/eyeflow/install/install-monitor.sh
+if [[ ! $PWD = /opt/eyeflow/monitor/install ]]; then
+    cp ./install-monitor.sh /opt/eyeflow/monitor/install/install-monitor.sh
 fi
 clear
 echo "##### running installation script.." | sudo tee -a $LOGFILE
@@ -82,42 +84,53 @@ fi
 mkdir -p /opt/eyeflow/monitor/promtail/positions
 if ls /opt/eyeflow/monitor/collector-config-v4.yaml 1> /dev/null 2>&1; then
     echo "##### saving existing collector-config-v4 as collector-config-v4.bak" | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/monitor/collector-config-v4.yaml /opt/eyeflow/install/collector-config-v4.bak
+    mv /opt/eyeflow/monitor/collector-config-v4.yaml /opt/eyeflow/monitor/install/collector-config-v4.bak
 fi
 if ls /opt/eyeflow/monitor/collector-config-v5.yaml 1> /dev/null 2>&1; then
     echo "##### saving existing collector-config-v5 as collector-config-v5.bak" | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/install/collector-config-v5.bak
+    mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/install/collector-config-v5.bak
 fi
-echo "##### Cloning Edge repo and set rights" | sudo tee -a $LOGFILE
-cd /opt/eyeflow/install
-rm -rf /opt/eyeflow/install/agent
+echo "----- Cloning Edge repo and setting rights -----" | sudo tee -a $LOGFILE
+cd /opt/eyeflow/monitor/install
+rm -rf /opt/eyeflow/monitor/install/agent
 git clone https://github.com/snsergio/agent.git
 if id "eyeflow" >/dev/null 2>&1; then
     chown -R eyeflow:users /opt/eyeflow/monitor
 else
-    echo "##### User eyeflow not present" | sudo tee -a $LOGFILE
+    echo "----- User eyeflow not present -----" | sudo tee -a $LOGFILE
 fi
+echo "----- Setting folder attributes -----" | sudo tee -a $LOGFILE
 setfacl -dm u::rwx,g::rwx,o::rx /opt/eyeflow/monitor
 chmod g+rwxs /opt/eyeflow/monitor
 chmod 775 /opt/eyeflow/monitor
-rm -rf /opt/eyeflow/install/agent/grafana-stack
-rm -rf /opt/eyeflow/install/agent/install
-rm -rf /opt/eyeflow/install/agent/README*
-if [ $arch == "x86" ]; then
-    rm -rf /opt/eyeflow/install/agent/jetson
+echo "----- Deleting unnecessary files -----" | sudo tee -a $LOGFILE
+if [ $(uname -i) != "aarch64" ]; then
+  rm -rf /opt/eyeflow/monitor/install/agent/jetson
 fi
-rsync -zvrh /opt/eyeflow/install/agent/* /opt/eyeflow/monitor
-if ls /opt/eyeflow/install/collector-config-v4.bak 1> /dev/null 2>&1; then
+rm -rf /opt/eyeflow/monitor/install/agent/install
+rm -rf /opt/eyeflow/monitor/install/agent/README*
+rm -rf /opt/eyeflow/monitor/install/agent/grafana-stack
+echo "----- Adding files -----" | sudo tee -a $LOGFILE
+rsync -zvrh /opt/eyeflow/monitor/install/agent/* /opt/eyeflow/monitor
+mv /opt/eyeflow/monitor/metric-collector/* /opt/eyeflow/monitor
+rm -rf /opt/eyeflow/monitor/metric-collector
+rm -rf /opt/eyeflow/monitor/prometheus-proxy
+rm -rf /opt/eyeflow/monitor/install/agent
+rm -rf /opt/eyeflow/monitor/README*
+chmod +x /opt/eyeflow/monitor/lib/pushprox-client
+if ls /opt/eyeflow/monitor/install/collector-config-v4.bak 1> /dev/null 2>&1; then
     echo "##### returning existing collector-config-v4 to monitor as collector-config-v4.bak" | sudo tee -a $LOGFILE
-    mv /opt/eyeflow/install/collector-config-v4.bak /opt/eyeflow/monitor/collector-config-v4.bak
+    mv /opt/eyeflow/monitor/install/collector-config-v4.bak /opt/eyeflow/monitor/collector-config-v4.bak
 fi
-if ls /opt/eyeflow/install/collector-config-v5.bak 1> /dev/null 2>&1; then
+if ls /opt/eyeflow/monitor/install/collector-config-v5.bak 1> /dev/null 2>&1; then
     echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
     echo "##### move new collectot-config-v5 to .source" | sudo tee -a $LOGFILE
     echo "##### restoring previous collectot-config-v5 " | sudo tee -a $LOGFILE
     if [ -f /opt/eyeflow/monitor/collector-config-v5.yaml ]; then
         mv /opt/eyeflow/monitor/collector-config-v5.yaml /opt/eyeflow/monitor/collector-config-v5.source
-        mv /opt/eyeflow/install/collector-config-v5.bak /opt/eyeflow/monitor/collector-config-v5.yaml
+        mv /opt/eyeflow/monitor/install/collector-config-v5.bak /opt/eyeflow/monitor/collector-config-v5.yaml
+        echo "metricMethod: exporter" >> /opt/eyeflow/monitor/collector-config-v5.yaml
+
     fi
 fi
 echo "##### Preparing Promtail" | sudo tee -a $LOGFILE
@@ -149,6 +162,7 @@ if ls /opt/eyeflow/monitor/collector-config-v5.source 1> /dev/null 2>&1; then
     echo "##### previous collectot-config-v5 is present" | sudo tee -a $LOGFILE
     echo "##### reloading systemctl daemon" | sudo tee -a $LOGFILE
     echo "##### restarting metric-collector" | sudo tee -a $LOGFILE
+    echo "#####  *** CHECK collector-config-v5.yaml file and make sure 'metricMethod' parameter is correctly configured"
     systemctl daemon-reload
     systemctl restart metric-collector.service
 fi
@@ -176,23 +190,40 @@ if [ -e "${files[0]}" ]; then
     rm -R /opt/eyeflow/monitor/install*
 fi
 rm -rf /opt/eyeflow/monitor/install/agent
+echo "----- Preparing Proxy -----" | sudo tee -a $LOGFILE
+cp /opt/eyeflow/monitor/proxy-exporter.service /etc/systemd/system
+systemctl enable proxy-exporter.service
+systemctl daemon-reload
+echo "----- Host FQDN: '$(hostname --fqdn)' -----" | sudo tee -a $LOGFILE
 clear
+echo "+-------------------------------------------------------------------------------------------+"
+echo "! Edit and configure collector-config.yaml file                                             !"
+echo "! - The previous configuration file is at /opt/eyeflow/monitor-old                          !"
+echo "!   saved version is '$VERSAO'                                                              !"
+echo "! - If the collector will run as EXPORTER, configure Prometheus to scrape this host at:     !"
+echo "!   FQDN: '$(hostname --fqdn)'                                                              !"
+echo "! - Edit proxy-exporter.service to reflect the correct export URL - (correct customer name) !"
+echo "! - Then start proxy exporter:                                                              !"
+echo "!   sudo systemctl start proxy-exporter.service                                             !"
+echo "! - Check if it runs with no errors:                                                        !"
+echo "!   sudo systemctl status proxy-exporter.service                                            !"
+echo "+-------------------------------------------------------------------------------------------+"
 echo "###########################################################" | sudo tee -a $LOGFILE
 echo "#####   end of Metric Collector installation script   #####" | sudo tee -a $LOGFILE
 echo "##### Finished at: $(date)" | sudo tee -a $LOGFILE
-if [ ! -f /opt/eyeflow/install/edge-install.log ]; then
-    mv $LOGFILE /opt/eyeflow/install/monitor-install-$(date +%F-%H:%M).log
-    echo "####################################################################"
-    echo "# LOG file at: /opt/eyeflow/install/monitor-install<date time>.log #"
-    echo "####################################################################"
+if [ ! -f /opt/eyeflow/monitor/install/edge-install.log ]; then
+    mv $LOGFILE /opt/eyeflow/monitor/install/monitor-install-$(date +%F-%H:%M).log
+    echo "#############################################################################"
+    echo "# LOG file at: /opt/eyeflow/monitor/install/monitor-install<date time>.log  #"
+    echo "#############################################################################"
 fi
 echo "#################################################################################"
 echo "# Edit Monitoring Agent configuration file to reflect Edge Station requirements #"
 echo "#################################################################################"
 echo "#     nano collector-config-v5.yaml                                             #"
 echo "#     Then run:                                                                 #"
-echo "#         systemctl start metric-collector.service  # To start metric collector #"
-echo "#         systemctl status metric-collector.service # To check collector status #"
+echo "#       systemctl restart metric-collector.service # To restart metric collector#"
+echo "#       systemctl status metric-collector.service  # To check collector status  #"
 echo "#################################################################################"
 echo " "
 echo "#################################################################################"
