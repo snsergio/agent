@@ -13,7 +13,7 @@ To install the monitoring agent, scrap station's data and send to Prometheus, fo
 - For systems where (NVIDIA) GPU is available, make sure NVIDIA package and nvidia-smi are installed and run with no errors;
   > nvidia-smi
 - Download the installation script at home folder;
-  > wget https://raw.githubusercontent.com/snsergio/agent/main/install-monitor.sh
+  > wget https://raw.githubusercontent.com/snsergio/agent/main/install/install-monitor.sh
 - Make sure the script has execution rights:
   > chmod +x install-monitor.sh
 - Run the script as SUDO:
