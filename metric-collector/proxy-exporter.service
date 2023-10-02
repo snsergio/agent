@@ -1,4 +1,4 @@
-# Ubuntu services - proxy client - PUB-dbc8709-20230819144026
+# Ubuntu services - proxy client - PUB-2e019a9-20231002172140
 [Unit]
 Description=Start the Metrics Collector v5 proxy client
 
