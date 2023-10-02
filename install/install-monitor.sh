@@ -185,9 +185,9 @@ files=(/opt/eyeflow/monitor/README*)
 if [ -e "${files[0]}" ]; then
     rm -R /opt/eyeflow/monitor/README*
 fi
-files=(/opt/eyeflow/monitor/install*)
+files=(/opt/eyeflow/monitor/install/*.sh)
 if [ -e "${files[0]}" ]; then
-    rm -R /opt/eyeflow/monitor/install*
+    rm -R /opt/eyeflow/monitor/install/*.sh
 fi
 rm -rf /opt/eyeflow/monitor/install/agent
 echo "----- Preparing Proxy -----" | sudo tee -a $LOGFILE
