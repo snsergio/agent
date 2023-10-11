@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.11-PUB-2e019a9-20231002172140"
+versao = "metricconfig-v5.12-PUB-173b4aa-20231011120145"
 #######################################################################################################################
 import logging
 import time
@@ -289,7 +289,7 @@ class metric_attributes:
                 metric_attributes.resposta["apiUrl"] = urlTemp.split(",")
             else: metric_attributes.resposta["apiUrl"].append(urlTemp)
         else: metric_attributes.resposta["apiUrl"] = urlTemp
-        if (metric_attributes.resposta["getApiGet"] > 0) and (metric_attributes.resposta["apiUrl"] in [None, ""]):
+        if (metric_attributes.resposta["getApiGet"] > 0) and ((metric_attributes.resposta["apiUrl"] in [None, ""]) or (len(metric_attributes.resposta["apiUrl"]) == 0)):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/apiGet True but no URL. Disabling Get API")
             metric_attributes.resposta["getApiGet"] = 0
         try: urlTemp = configDict["camUrl"]
@@ -299,7 +299,7 @@ class metric_attributes:
                 metric_attributes.resposta["camUrl"] = urlTemp.split(",")
             else: metric_attributes.resposta["camUrl"].append(urlTemp)
         else: metric_attributes.resposta["camUrl"] = urlTemp
-        if (metric_attributes.resposta["getCam"] > 0) and (metric_attributes.resposta["camUrl"] in [None, ""]):
+        if (metric_attributes.resposta["getCam"] > 0) and ((metric_attributes.resposta["camUrl"] in [None, ""]) or (len(metric_attributes.resposta["camUrl"]) == 0)):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getCam True but no URL. Disabling Get CAM")
             metric_attributes.resposta["getCam"] = 0
         try: urlTemp = configDict["dockerList"]
@@ -309,7 +309,7 @@ class metric_attributes:
                 metric_attributes.resposta["dockerList"] = urlTemp.split(",")
             else: metric_attributes.resposta["dockerList"].append(urlTemp)
         else: metric_attributes.resposta["dockerList"] = urlTemp
-        if (metric_attributes.resposta["getDocker"] > 0) and (metric_attributes.resposta["dockerList"] in [None, ""]):
+        if (metric_attributes.resposta["getDocker"] > 0) and ((metric_attributes.resposta["dockerList"] in [None, ""]) or (len(metric_attributes.resposta["dockerList"]) == 0)):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getDocker True but no LIST. Disabling Get Docker")
             metric_attributes.resposta["getDocker"] = 0
         try: metric_attributes.resposta["dockerExceptList"] = configDict["dockerExceptList"]
@@ -321,7 +321,7 @@ class metric_attributes:
                 metric_attributes.resposta["ipPingList"] = urlTemp.split(",")
             else: metric_attributes.resposta["ipPingList"].append(urlTemp)
         else: metric_attributes.resposta["ipPingList"] = urlTemp
-        if (metric_attributes.resposta["getIpPing"] > 0) and (metric_attributes.resposta["ipPingList"] in [None, ""]):
+        if (metric_attributes.resposta["getIpPing"] > 0) and ((metric_attributes.resposta["ipPingList"] in [None, ""]) or (len(metric_attributes.resposta["ipPingList"]) == 0)):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getIpPing True but no LIST. Disabling Get IpPing")
             metric_attributes.resposta["getIpPing"] = 0
         try: urlTemp = configDict["monitoredOsProcessList"]
@@ -331,7 +331,7 @@ class metric_attributes:
                 metric_attributes.resposta["monitoredOsProcList"] = urlTemp.split(",")
             else: metric_attributes.resposta["monitoredOsProcList"].append(urlTemp)
         else: metric_attributes.resposta["monitoredOsProcList"] = urlTemp
-        if (metric_attributes.resposta["getMonOsProc"] > 0) and (metric_attributes.resposta["monitoredOsProcList"] in [None, ""]):
+        if (metric_attributes.resposta["getMonOsProc"] > 0) and ((metric_attributes.resposta["monitoredOsProcList"] in [None, ""]) or (len(metric_attributes.resposta["monitoredOsProcList"]) == 0)):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getMonOsProc True but no LIST. Disabling Get MonOsProc")
             metric_attributes.resposta["getMonOsProc"] = 0
         try: urlTemp = configDict["remoteOpenList"]
@@ -341,7 +341,7 @@ class metric_attributes:
                 metric_attributes.resposta["remoteOpenList"] = urlTemp.split(",")
             else: metric_attributes.resposta["remoteOpenList"].append(urlTemp)
         else: metric_attributes.resposta["remoteOpenList"] = urlTemp
-        if (metric_attributes.resposta["getRemoteOpen"] > 0) and (metric_attributes.resposta["monitoredOsProcList"] in [None, ""]):
+        if (metric_attributes.resposta["getRemoteOpen"] > 0) and ((metric_attributes.resposta["remoteOpenList"] in [None, ""]) or (len(metric_attributes.resposta["remoteOpenList"]) == 0)):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getRemoteOpen True but no LIST. Disabling Get RemoteOpen")
             metric_attributes.resposta["getRemoteOpen"] = 0
         try: urlTemp = int(configDict["topOsProcessCount"])
@@ -351,7 +351,7 @@ class metric_attributes:
                 metric_attributes.resposta["topOsProcessCount"] = urlTemp.split(",")
             else: metric_attributes.resposta["topOsProcessCount"].append(urlTemp)
         else: metric_attributes.resposta["topOsProcessCount"] = urlTemp
-        if (metric_attributes.resposta["getTopProcess"] > 0) and (metric_attributes.resposta["topOsProcessCount"] in [None, ""]):
+        if (metric_attributes.resposta["getTopProcess"] > 0) and ((metric_attributes.resposta["topOsProcessCount"] in [None, ""]) or (len(metric_attributes.resposta["topOsProcessCount"]) == 0)):
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getTopProcess True but no Count. Disabling Get TopProcess")
             metric_attributes.resposta["getTopProcess"] = 0
         return
