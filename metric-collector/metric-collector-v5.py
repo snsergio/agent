@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metric-collector-v5.11-PUB-d3c228f-2310182040"
+versao = "metric-collector-v5.12-PUB-bf66733-2310191858"
 #######################################################################################################################
 import logging 
 #######################################################################################################################
@@ -193,6 +193,7 @@ def calc_time(ntp):
 # Main 
 if __name__ == "__main__":
     import time
+    from datetime import datetime
     from lib import common as c
     from lib import metricconfig as mc
     from lib import pushtogateway as pg
@@ -220,7 +221,11 @@ if __name__ == "__main__":
             basic.set_data()
             basic.push_to_gateway()
             basic.clean_prom()
-            # teste = vc.version_update.compare_versions(configDict)
+            if updTime + 300 < datetime.timestamp(datetime.now()):
+                apiStatus = vc.version_update.export_actual(configDict)
+                if apiStatus != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Main-Export Actual Error: {apiStatus}")
+                vc.version_update.check_outdated(configDict)
+                updTime = datetime.timestamp(datetime.now())
             if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
             c.logFirstRun = 1
             time.sleep(configDict["captureInterval"])
@@ -229,12 +234,17 @@ if __name__ == "__main__":
         from lib import metricexporter as me
         start_http_server(9089)
         basic = me.exporter(configDict)
+        updTime = datetime.timestamp(datetime.now())
         while True:
             get_ntp(configDict)
             basic.metricDict = get_metrics(configDict)
             me.exporter.clean_prom(basic)
             me.exporter.set_data(basic)
-            # teste = vc.version_update.compare_versions(configDict)
+            if updTime + 300 < datetime.timestamp(datetime.now()):
+                apiStatus = vc.version_update.export_actual(configDict)
+                if apiStatus != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Main-Export Actual Error: {apiStatus}")
+                vc.version_update.check_outdated(configDict)
+                updTime = datetime.timestamp(datetime.now())
             if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
             c.logFirstRun = 1
             time.sleep(configDict["captureInterval"])

@@ -1,4 +1,4 @@
-# Monitoring config file for metric collector v5-PUB-d3c228f-2310182040 ############################
+# Monitoring config file for metric collector v5-PUB-bf66733-2310191858 ############################
 # v5.11 ################################################################################################
 # EDGE Station information #############################################################################
 # Station ID used to set Station's Customer-specific configuration
@@ -69,9 +69,9 @@ restart:
 #         updateUrl: Update API URL
 #         updateAccesstoken: Update API Access information
 update:
-  autoUpdate: false
+  autoUpdate: true
   autoRestart: false
-  updateUrl: 
+  updateUrl: "https://vc.eyeflow.ai"
   updateAccesstoken: 
 #-------------------------------------------------------------------------------------------------------
 # Station metrics to capture ###########################################################################

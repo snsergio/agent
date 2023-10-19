@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.12-PUB-d3c228f-2310182040"
+versao = "metricconfig-v5.13-PUB-bf66733-2310191858"
 #######################################################################################################################
 import logging
 import time
@@ -82,23 +82,29 @@ class metric_attributes:
         metric_attributes.resposta["customerName"] = "nocustomername"
         metric_attributes.resposta["stationName"] = "nostationname"
         metric_attributes.resposta["stationIpList"] = []
-        try: metric_attributes.resposta["customerName"] = configDict["stationID"]["customerName"]
-        except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/customerName not set. Assuming 'nocustomername'")
-        try: metric_attributes.resposta["stationName"] = configDict["stationID"]["stationName"]
-        except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationName not set. Assuming 'nostationname'")
-        try: ipSelf = configDict["stationID"]["StationIP"]
-        except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationIP not set")
+        ipSelf = []
+        if configDict["stationID"]["customerName"] != None:
+            try: metric_attributes.resposta["customerName"] = configDict["stationID"]["customerName"]
+            except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/customerName not set. Assuming 'nocustomername'")
+        if configDict["stationID"]["stationName"] != None:
+            try: metric_attributes.resposta["stationName"] = configDict["stationID"]["stationName"]
+            except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationName not set. Assuming 'nostationname'")
+        if configDict["stationID"]["StationIP"] != None:
+            try: ipSelf = configDict["stationID"]["StationIP"]
+            except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationIP not set")
         if isinstance(ipSelf, str): 
             if "," in ipSelf:
                 metric_attributes.resposta["stationIpList"] = ipSelf.split(",")
             else: metric_attributes.resposta["stationIpList"].append(ipSelf)
         else: metric_attributes.resposta["stationIpList"] = ipSelf
         tmpList = []
-        for sIp in range(len(metric_attributes.resposta["stationIpList"])):
-            if not metric_attributes.validate_ip(metric_attributes.resposta["stationIpList"][sIp].strip()):
-                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationIP not valid: {sIp}")
-            else: tmpList.append(metric_attributes.resposta["stationIpList"][sIp].strip())
-        metric_attributes.resposta["stationIpList"] = tmpList
+        if metric_attributes.resposta["stationIpList"] != None:
+            for sIp in range(len(metric_attributes.resposta["stationIpList"])):
+                if not metric_attributes.validate_ip(metric_attributes.resposta["stationIpList"][sIp].strip()):
+                    logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_station_id: stationID/stationIP not valid: {sIp}")
+                else: tmpList.append(metric_attributes.resposta["stationIpList"][sIp].strip())
+            metric_attributes.resposta["stationIpList"] = tmpList
+        else: metric_attributes.resposta["stationIpList"] = ""
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Get RTDB information from configuration file
@@ -346,14 +352,12 @@ class metric_attributes:
             metric_attributes.resposta["getRemoteOpen"] = 0
         try: urlTemp = int(configDict["topOsProcessCount"])
         except: logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: topOsProcessCount not set")
-        if isinstance(urlTemp, str): 
-            if "," in urlTemp:
-                metric_attributes.resposta["topOsProcessCount"] = urlTemp.split(",")
-            else: metric_attributes.resposta["topOsProcessCount"].append(urlTemp)
-        else: metric_attributes.resposta["topOsProcessCount"] = urlTemp
-        if (metric_attributes.resposta["getTopProcess"] > 0) and ((metric_attributes.resposta["topOsProcessCount"] in [None, ""]) or (len(metric_attributes.resposta["topOsProcessCount"]) == 0)):
-            logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getTopProcess True but no Count. Disabling Get TopProcess")
-            metric_attributes.resposta["getTopProcess"] = 0
+        if isinstance(urlTemp, int): metric_attributes.resposta["topOsProcessCount"] = urlTemp
+        else:
+            try: metric_attributes.resposta["topOsProcessCount"] = int(urlTemp)
+            except:
+                logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-metric_attributes.get_capture: captureMetrics/getTopProcess True but no Count. Defaulting number of processes to 3")
+                metric_attributes.resposta["topOsProcessCount"] = 3
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Validate IP Address
