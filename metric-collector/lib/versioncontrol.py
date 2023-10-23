@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "versioncontrol-v5.01-PUB-bf66733-2310191858"
+versao = "versioncontrol-v5.01-PUB-0a7298a-2310231224"
 #######################################################################################################################
 import logging
 import requests
@@ -27,7 +27,7 @@ class version_update:
                 if len(libVersion) == 14: libVersion = libVersion[2:12]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-bf66733-2310191858"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-0a7298a-2310231224"
                 libName = tempName[0]
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]): libDevVersion = tempName[1]
                 else: 
@@ -71,6 +71,7 @@ class version_update:
                                     importlib.reload(newLib)
                                     sys.path.pop()
                                     updated = True
+                                    logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.check_outdated: module {libName} updated")
                                     try:
                                         if c.versionDict[libName].split("-")[-1] > libVersion:
                                             os.remove((fn + ".vcb"))
@@ -104,7 +105,7 @@ class version_update:
                 libVersion = tempName[-1]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-bf66733-2310191858"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-0a7298a-2310231224"
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]):
                     libName = "lib/" + tempName[0] + ".py"
                 else: libName = tempName[0] + "-" + tempName[1] + ".py"
@@ -117,6 +118,7 @@ class version_update:
                 apiURL = configDict["updateUrl"] + "/history"
                 updateResp = requests.post(apiURL, json=actualData)
                 if updateResp.status_code != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.export_actual: Failed to POST: Response = {updateResp.status_code}")
+        if updateResp.status_code == 200 and c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.export_actual: Export to API successful: Response = {updateResp.status_code}")
         return updateResp.status_code
     ###################################################################################################
     def get_actual(configDict):
