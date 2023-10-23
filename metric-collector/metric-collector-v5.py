@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metric-collector-v5.12-PUB-0a7298a-2310231224"
+versao = "metric-collector-v5.13-PUB-c06a831-2310231310"
 #######################################################################################################################
 import logging 
 #######################################################################################################################
@@ -235,6 +235,7 @@ if __name__ == "__main__":
         start_http_server(9089)
         basic = me.exporter(configDict)
         updTime = datetime.timestamp(datetime.now())
+        vc.version_update.export_actual(configDict)
         while True:
             get_ntp(configDict)
             basic.metricDict = get_metrics(configDict)

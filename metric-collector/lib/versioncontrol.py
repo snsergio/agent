@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "versioncontrol-v5.01-PUB-0a7298a-2310231224"
+versao = "versioncontrol-v5.02-PUB-c06a831-2310231310"
 #######################################################################################################################
 import logging
 import requests
@@ -27,7 +27,7 @@ class version_update:
                 if len(libVersion) == 14: libVersion = libVersion[2:12]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-0a7298a-2310231224"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-c06a831-2310231310"
                 libName = tempName[0]
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]): libDevVersion = tempName[1]
                 else: 
@@ -105,7 +105,7 @@ class version_update:
                 libVersion = tempName[-1]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-0a7298a-2310231224"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-c06a831-2310231310"
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]):
                     libName = "lib/" + tempName[0] + ".py"
                 else: libName = tempName[0] + "-" + tempName[1] + ".py"
