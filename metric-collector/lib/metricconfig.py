@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricconfig-v5.13-PUB-c06a831-2310231310"
+versao = "metricconfig-v5.14-PUB-4fda82f-2310231522"
 #######################################################################################################################
 import logging
 import time
@@ -213,9 +213,7 @@ class metric_attributes:
                 metric_attributes.resposta["autoUpdate"] = False
                 metric_attributes.resposta["autoRestart"] = False
             elif metric_attributes.resposta["updateAccessToken"] in [None, ""]:
-                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: AccessToken not set, disabling Auto Update")
-                metric_attributes.resposta["autoUpdate"] = False
-                metric_attributes.resposta["autoRestart"] = False
+                logging.warning(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}- metric_attributes.get_update: AccessToken not set")
         return
         #----------------------------------------------------------------------------------------------------------------------
     # Get capture_metrics information from configuration file

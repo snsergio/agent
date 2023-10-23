@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metric-collector-v5.13-PUB-c06a831-2310231310"
+versao = "metric-collector-v5.14-PUB-4fda82f-2310231522"
 #######################################################################################################################
 import logging 
 #######################################################################################################################
@@ -212,8 +212,10 @@ if __name__ == "__main__":
         configDict["getJetson"] = 0
     logging.basicConfig(filename = c.logPath + c.logFileName, level=logging.DEBUG, force=True)
     logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Metric Method: {configDict['metricMethod']}")
+    logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-update config: {configDict['autoUpdate']}")
     del mc
     if configDict['metricMethod'] == "push":
+        vc.version_update.export_actual(configDict)
         while True:
             get_ntp(configDict)
             metrics = get_metrics(configDict)
@@ -222,9 +224,10 @@ if __name__ == "__main__":
             basic.push_to_gateway()
             basic.clean_prom()
             if updTime + 300 < datetime.timestamp(datetime.now()):
-                apiStatus = vc.version_update.export_actual(configDict)
-                if apiStatus != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Main-Export Actual Error: {apiStatus}")
-                vc.version_update.check_outdated(configDict)
+                if configDict["autoUpdate"]:
+                    apiStatus = vc.version_update.export_actual(configDict)
+                    if apiStatus != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Main-Export Actual Error: {apiStatus}")
+                    vc.version_update.check_outdated(configDict)
                 updTime = datetime.timestamp(datetime.now())
             if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
             c.logFirstRun = 1
@@ -242,9 +245,10 @@ if __name__ == "__main__":
             me.exporter.clean_prom(basic)
             me.exporter.set_data(basic)
             if updTime + 300 < datetime.timestamp(datetime.now()):
-                apiStatus = vc.version_update.export_actual(configDict)
-                if apiStatus != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Main-Export Actual Error: {apiStatus}")
-                vc.version_update.check_outdated(configDict)
+                if configDict["autoUpdate"]:
+                    apiStatus = vc.version_update.export_actual(configDict)
+                    if apiStatus != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-Main-Export Actual Error: {apiStatus}")
+                    vc.version_update.check_outdated(configDict)
                 updTime = datetime.timestamp(datetime.now())
             if not c.logFirstRun: logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version dictionary: {c.versionDict}")
             c.logFirstRun = 1
