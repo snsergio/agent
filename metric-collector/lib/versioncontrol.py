@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "versioncontrol-v5.02-PUB-4fda82f-2310231522"
+versao = "versioncontrol-v5.06-PUB-d3e6a05-2310232111"
 #######################################################################################################################
 import logging
 import requests
@@ -20,6 +20,7 @@ class version_update:
         import importlib
         if configDict["updateUrl"] != "":
             updated = False
+            needRestart = False
             for element in c.versionDict:
                 libVersion, libFullVersion, libDevVersion, libName = "", "", "", ""
                 tempName = c.versionDict[element].split("-")
@@ -27,12 +28,14 @@ class version_update:
                 if len(libVersion) == 14: libVersion = libVersion[2:12]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-4fda82f-2310231522"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-d3e6a05-2310232111"
                 libName = tempName[0]
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]): libDevVersion = tempName[1]
                 else: 
                     libName = libName + "-" + tempName[1]
-                    if any(v in tempName[2] for v in ["v5", "v6", "v7", "v8"]): libDevVersion = tempName[2]
+                    if any(v in tempName[2] for v in ["v5", "v6", "v7", "v8"]): 
+                        libDevVersion = tempName[2]
+                        libName = libName + "-" + libDevVersion.split(".")[0]
                 apiURL = configDict["updateUrl"] + "/inbound/" + libName + ".py"
                 try: 
                     apiData = json.loads(requests.get(apiURL).text)["0"]
@@ -50,7 +53,14 @@ class version_update:
                     logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.check_outdated: API inbound GET error: {error}")
                 if len(gitInfo) > 0:
                     if gitInfo["libVersion"] != libFullVersion:
-                        if gitInfo["libVersion"].split("-")[1] > libVersion:
+                        try:
+                            gitVer = int(gitInfo["libVersion"].split("-")[1])
+                            if libVersion.isnumeric(): localLib = int(libVersion)
+                            else: localLib = 0
+                        except Exception as error:
+                            gitVer = 0    
+                            logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.check_outdated: GIT Version error: {error}")
+                        if gitVer > localLib:
                             if gitInfo["libFolder"] == "root": gitInfo["libFolder"] = ""
                             if not os.path.isdir(c.scriptPath + "/" + gitInfo["libFolder"]): 
                                 os.mkdir(c.scriptPath + "/" + gitInfo["libFolder"])
@@ -85,7 +95,11 @@ class version_update:
                                             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.check_outdated: Failed to load new module {gitInfo['libFolder']}")
                                     except Exception as error:
                                         logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.check_outdated: Failed to remove backup module {gitInfo['libFolder']} - Error: {error}")
+                            else: needRestart = True
             if updated: apiStatus = version_update.export_actual(configDict)
+        if needRestart: 
+            resposta = version_update.restart_service()
+            logging.info(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.check_outdated: Metric-collector service restart: {resposta}")
         return
     ###################################################################################################
     def is_hex(num):
@@ -105,7 +119,7 @@ class version_update:
                 libVersion = tempName[-1]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-4fda82f-2310231522"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-d3e6a05-2310232111"
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]):
                     libName = "lib/" + tempName[0] + ".py"
                 else: libName = tempName[0] + "-" + tempName[1] + ".py"
@@ -132,6 +146,14 @@ class version_update:
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.get_actual: Failed to GET: Response = {getResp.status_code}")
         return getResp
     ###################################################################################################
-
-
-
+    def restart_service():
+        import subprocess
+        import time
+        try: subprocess.call('echo $SAMON | sudo -S systemctl restart metric-collector.service', shell = True)
+        except: 
+            logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-sys_agent_exec.sysagent_restart: Error restarting sysagent")
+            resposta = "error"
+        else: resposta = "success"
+        return resposta
+    ###################################################################################################
+    
