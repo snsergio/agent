@@ -1,10 +1,10 @@
-# Ubuntu services - metric collector - PUB-5c63ef5-2310271721
+# Ubuntu services - metric collector - PUB-7f762d2-2310271723
 [Unit]
 Description=Start the Edge Station Metrics Collector v5 exporter
 
 [Service]
 Type=simple
-User=eyeflow
+User=root
 Restart=always
 RestartSec=10
 Environment="CONFIGPATH=/opt/eyeflow/monitor"
