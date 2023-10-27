@@ -10,6 +10,7 @@ if [ "$EUID" -ne 0 ]
     exit
 fi
 wget --no-cookies --no-cache https://raw.githubusercontent.com/snsergio/agent/main/install/metric-collector-updater.py
-if [ -e ./metric-collector-updater.py ] is present; then
+if [ -f ./metric-collector-updater.py ]; then
     python3 metric-collector-updater.py
+    rm metric-collector-updater.py
 fi
