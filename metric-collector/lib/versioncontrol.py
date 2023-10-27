@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "versioncontrol-v5.06-PUB-d3e6a05-2310232111"
+versao = "versioncontrol-v5.08-PUB-5c63ef5-2310271721"
 #######################################################################################################################
 import logging
 import requests
@@ -28,7 +28,7 @@ class version_update:
                 if len(libVersion) == 14: libVersion = libVersion[2:12]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-d3e6a05-2310232111"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-5c63ef5-2310271721"
                 libName = tempName[0]
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]): libDevVersion = tempName[1]
                 else: 
@@ -114,21 +114,27 @@ class version_update:
             return "no API URL"
         else:
             for element in c.versionDict:
+                actualData = {}
                 libVersion, libFullVersion, libName = "", "", ""
                 tempName = c.versionDict[element].split("-")
                 libVersion = tempName[-1]
                 if version_update.is_hex(tempName[-2]): libFullVersion = str(tempName[-2]) + "-" + str(libVersion)
                 else: libFullVersion = ""
-                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-d3e6a05-2310232111"
+                if libFullVersion == "test" and tempName[-2] == "beta": libFullVersion = "PUB-5c63ef5-2310271721"
                 if any(v in tempName[1] for v in ["v5", "v6", "v7", "v8"]):
                     libName = "lib/" + tempName[0] + ".py"
-                else: libName = tempName[0] + "-" + tempName[1] + ".py"
-                actualData = {
-                    'customer': configDict["customerName"],
-                    'station': configDict["stationName"],
-                    'host': configDict["hostName"],
-                    'libName': libName,
-                    'libVersion': libFullVersion}
+                    actualData["libDevVersion"] = tempName[1]
+                else: 
+                    libName = tempName[0] + "-" + tempName[1]
+                    if any(v in tempName[2] for v in ["v5", "v6", "v7", "v8"]):
+                        libName = libName + "-" + tempName[2].split(".")[0]
+                        actualData["libDevVersion"] = tempName[2]
+                    libName = libName + ".py"
+                actualData['customer'] = configDict["customerName"]
+                actualData['station'] = configDict["stationName"]
+                actualData['host'] = configDict["hostName"]
+                actualData['libName'] = libName
+                actualData['libVersion'] = libFullVersion
                 apiURL = configDict["updateUrl"] + "/history"
                 updateResp = requests.post(apiURL, json=actualData)
                 if updateResp.status_code != 200: logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-version_update.export_actual: Failed to POST: Response = {updateResp.status_code}")
@@ -149,11 +155,10 @@ class version_update:
     def restart_service():
         import subprocess
         import time
-        try: subprocess.call('echo $SAMON | sudo -S systemctl restart metric-collector.service', shell = True)
+        try: subprocess.call('systemctl restart metric-collector.service', shell = True)
         except: 
             logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-sys_agent_exec.sysagent_restart: Error restarting sysagent")
             resposta = "error"
         else: resposta = "success"
         return resposta
     ###################################################################################################
-    

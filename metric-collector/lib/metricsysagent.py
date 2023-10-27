@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #######################################################################################################################
-versao = "metricsysagent-v5.11-PUB-d3e6a05-2310232111"
+versao = "metricsysagent-v5.12-PUB-5c63ef5-2310271721"
 #######################################################################################################################
 import logging
 import time
@@ -66,7 +66,7 @@ class sys_agent_exec:
                     errorcount += 1
             if errorcount > 0: c.sysAgentCount += 1
             if c.sysAgentCount > 3:
-                try: reSA = subprocess.call('echo $SAMON | sudo -S systemctl restart sys_agent.service', shell = True)
+                try: reSA = subprocess.call('systemctl restart sys_agent.service', shell = True)
                 except: 
                     logging.error(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()))}-sys_agent_exec.sysagent_restart: Error restarting sysagent")
                     execError = 1
